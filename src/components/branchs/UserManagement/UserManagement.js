@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import { Drawer, Grid, App, Button, Space } from "antd";
+import { Drawer, Grid, App } from "antd";
 import { AppContext } from "../../../App";
 import api from "../../../api/endpoints";
 import { toggle_user_status } from "../../../api/endpoints/branchs";
@@ -15,7 +15,6 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
 
   // Estado de usuarios
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [currentUserRole, setCurrentUserRole] = useState(null);
   const [assignModalVisible, setAssignModalVisible] = useState(false);
   const { state: appState } = useContext(AppContext);
@@ -27,7 +26,6 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
   // Cargar usuarios de la sucursal
   const fetchUsers = async () => {
     if (!branch?.id) return;
-    setLoading(true);
     try {
       const response = await api.branchs.get_branch_users(branch.id);
       const usersData = Array.isArray(response.data) ? response.data : [];
@@ -44,8 +42,6 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
       );
       setUsers([]);
       setCurrentUserRole(null);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -105,13 +101,10 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
     if (onUpdate) onUpdate();
   };
 
-  // Verificar si el usuario actual puede gestionar usuarios
-  const canManageUsers = () => {
-    if (currentUserType === "ADM") return true;
-    if (currentUserRole === "OWNER") return true;
-    if (currentUserRole === "ADMIN") return true;
-    if (currentUserRole === "MANAGER") return true;
-    return false;
+  // Handler para cambio de sucursal
+  const handleChangeBranch = () => {
+    fetchUsers();
+    if (onUpdate) onUpdate();
   };
 
   // No renderizar si no hay branch o business_name
@@ -126,17 +119,6 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
         open={visible}
         onClose={onClose}
         width={isMobile ? "100%" : 800}
-        extra={
-          canManageUsers() && (
-            <Button
-              type="primary"
-              onClick={() => setAssignModalVisible(true)}
-              style={{ marginRight: 8 }}
-            >
-              Asignar Usuario
-            </Button>
-          )
-        }
       >
         {/* Tabla para desktop, lista para mobile */}
         {isMobile ? (
@@ -145,9 +127,11 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
             currentUserId={currentUserId}
             currentUserType={currentUserType}
             currentUserRole={currentUserRole}
+            currentBranch={branch}
             onUpdateRole={onUpdateRole}
             onRemoveUser={onRemoveUser}
             onToggleStatus={onToggleUserStatus}
+            onChangeBranch={handleChangeBranch}
           />
         ) : (
           <UserTable
@@ -155,9 +139,11 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
             currentUserId={currentUserId}
             currentUserType={currentUserType}
             currentUserRole={currentUserRole}
+            currentBranch={branch}
             onUpdateRole={onUpdateRole}
             onRemoveUser={onRemoveUser}
             onToggleStatus={onToggleUserStatus}
+            onChangeBranch={handleChangeBranch}
           />
         )}
       </Drawer>

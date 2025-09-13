@@ -44,6 +44,12 @@ export const rules = (state) => {
         message: "Selecciona una categoría",
       },
     ],
+    product_type: [
+      {
+        required: true,
+        message: "Selecciona el tipo de producto",
+      },
+    ],
     price: [
       {
         required: true,

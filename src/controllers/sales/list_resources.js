@@ -2,13 +2,41 @@ import api from "../../api/endpoints";
 import { list_all } from "../../api/endpoints/clients";
 
 const getBranchs = async (dispatch) => {
-  const get_branchs = await api.branchs.list(1).then((response) => {
+  try {
+    const response = await api.branchs.my_branches();
+    const branchesData = Array.isArray(response.data) ? response.data : [];
+    
+    // Extraer solo las sucursales del array de accesos
+    const branches = branchesData.map(branchAccess => branchAccess.branch || branchAccess);
+    
     dispatch({
       type: "add_branchs",
-      payload: response,
+      payload: {
+        results: branches,
+        count: branches.length,
+      },
     });
-  });
-  return get_branchs;
+    
+    // Si hay sucursales, seleccionar la primera por defecto
+    if (branches.length > 0) {
+      dispatch({
+        type: "selected_branch",
+        payload: branches[0],
+      });
+    }
+    
+    return branches;
+  } catch (error) {
+    console.error("Error fetching branches:", error);
+    dispatch({
+      type: "add_branchs",
+      payload: {
+        results: [],
+        count: 0,
+      },
+    });
+    return [];
+  }
 };
 
 export const getProducts = async (dispatch, state) => {

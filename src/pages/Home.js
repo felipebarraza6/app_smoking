@@ -22,14 +22,14 @@ import Branchs from "../containers/Branchs";
 import Products from "../containers/Products";
 import Clients from "../containers/Clients";
 import NotFound from "../containers/NotFound";
-import DriversTruck from "../containers/Drivers";
 import TypePayments from "../containers/TypePayments";
 import Sale from "../containers/Sale";
 import Orders from "../containers/Orders";
+import Measurements from "../containers/Measurements";
 import ListOrdersManagement from "../components/orders/ListOrdersManagement/Component";
 import ListSalesManagement from "../components/sale/ListSalesManagement/Component";
 import Dashboard from "../components/dash/DashboardRefactored";
-import MyProfile from "../pages/MyProfile";
+import MyProfile from "./MyProfile";
 import logo from "../assets/img/logo.png";
 import Documentation from "./Documentation";
 import StatusPage from "./StatusPage";
@@ -185,14 +185,6 @@ const Home = () => {
                 }
               />
               <Route
-                path="/app/drivers"
-                element={
-                  <PageFade>
-                    <DriversTruck />
-                  </PageFade>
-                }
-              />
-              <Route
                 path="/app/type-payments"
                 element={
                   <PageFade>
@@ -213,6 +205,14 @@ const Home = () => {
                 element={
                   <PageFade>
                     <Orders />
+                  </PageFade>
+                }
+              />
+              <Route
+                path="/app/measurements"
+                element={
+                  <PageFade>
+                    <Measurements />
                   </PageFade>
                 }
               />

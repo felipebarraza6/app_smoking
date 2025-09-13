@@ -23,7 +23,7 @@ const CreateUpdate = () => {
   const breakpoint = useBreakpoint();
   const mobile = isMobile(breakpoint);
 
-  const branchs = state.branchs.list;
+  const branchs = state.branchs?.list || [];
   const selected_branch = state.branchs.selected;
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
 
@@ -157,14 +157,18 @@ const CreateUpdate = () => {
           </Popconfirm>
         </Flex>
       }
-      tabList={branchs.map((branch) => ({
-        key: branch.id,
-        label:
-          branch.business_name.length > 15
-            ? `${branch.business_name.slice(0, 15).toUpperCase()}...`
-            : branch.business_name.toUpperCase(),
-        icon: <ShopOutlined />,
-      }))}
+      tabList={
+        Array.isArray(branchs)
+          ? branchs.map((branch) => ({
+              key: branch.id,
+              label:
+                branch.business_name.length > 15
+                  ? `${branch.business_name.slice(0, 15).toUpperCase()}...`
+                  : branch.business_name.toUpperCase(),
+              icon: <ShopOutlined />,
+            }))
+          : []
+      }
     >
       <Flex gap="large" style={{ minHeight: "60vh" }} vertical>
         {/* StepsNav siempre visible, pero compacto en móvil */}

@@ -10,13 +10,19 @@ const createBranch = async (values, dispatch, form, notification) => {
         type: "postsave_or_update",
       });
 
+      // Forzar actualización de la lista después de crear
+      dispatch({
+        type: "update_list",
+      });
+
       form.resetFields();
+      notification.success({ message: "Sucursal creada exitosamente." });
     })
     .catch((e) => {
       const errors = e.response.data;
       const errorList = Object.keys(errors).map((key) => errors[key]);
       notification.error({
-        message: "Errores al crear la nueva tienda.",
+        message: "Errores al crear la nueva sucursal.",
         description: (
           <ul>
             {errorList.map((error) => (
@@ -47,13 +53,13 @@ const updateBranch = async (values, state, dispatch, form, notification) => {
       });
 
       form.resetFields();
-      notification.success({ message: "Tienda actualizada." });
+      notification.success({ message: "Sucursal actualizada." });
     })
     .catch((e) => {
       const errors = e.response.data;
       const errorList = Object.keys(errors).map((key) => errors[key]);
       notification.error({
-        message: "Errores al actualizar la tienda.",
+        message: "Errores al actualizar la sucursal.",
         description: (
           <ul>
             {errorList.map((error) => (
@@ -114,7 +120,6 @@ const getBranchs = async (state, dispatch) => {
       payload: payload,
     });
   } catch (error) {
-
     dispatch({
       type: "add",
       payload: {

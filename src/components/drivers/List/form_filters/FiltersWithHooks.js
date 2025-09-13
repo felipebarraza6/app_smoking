@@ -4,6 +4,8 @@ import {
   FilterOutlined,
   FilterFilled,
   FileProtectOutlined,
+  UserOutlined,
+  CheckCircleOutlined,
 } from "@ant-design/icons";
 
 const Filters = ({ filters, branchOptions, onFilterChange, onFilterReset }) => {
@@ -26,6 +28,17 @@ const Filters = ({ filters, branchOptions, onFilterChange, onFilterReset }) => {
     [onFilterChange]
   );
 
+  const onSelectAvailability = useCallback(
+    (value) => {
+      onFilterChange({ is_available: value });
+    },
+    [onFilterChange]
+  );
+
+  const onClearAvailability = useCallback(() => {
+    onFilterChange({ is_available: null });
+  }, [onFilterChange]);
+
   const onResetFilters = useCallback(() => {
     onFilterReset();
   }, [onFilterReset]);
@@ -33,43 +46,39 @@ const Filters = ({ filters, branchOptions, onFilterChange, onFilterReset }) => {
   // Memoizar el icono del filtro
   const renderIcon = useMemo(() => {
     if (
-      filters.search ||
-      filters.code ||
+      filters.name ||
       filters.branch ||
-      filters.category ||
-      filters.vehicle_plate
+      filters.vehicle_plate ||
+      filters.is_available !== null
     ) {
       return <FilterFilled />;
     } else {
       return <FilterOutlined />;
     }
   }, [
-    filters.search,
-    filters.code,
+    filters.name,
     filters.branch,
-    filters.category,
     filters.vehicle_plate,
+    filters.is_available,
   ]);
 
   // Memoizar el estado disabled del botón
   const renderDisabled = useMemo(() => {
     if (
-      filters.search ||
-      filters.code ||
+      filters.name ||
       filters.branch ||
-      filters.category ||
-      filters.vehicle_plate
+      filters.vehicle_plate ||
+      filters.is_available !== null
     ) {
       return false;
     } else {
       return true;
     }
   }, [
-    filters.search,
-    filters.code,
+    filters.name,
     filters.branch,
-    filters.category,
     filters.vehicle_plate,
+    filters.is_available,
   ]);
 
   // Memoizar la orientación vertical
@@ -83,6 +92,16 @@ const Filters = ({ filters, branchOptions, onFilterChange, onFilterReset }) => {
 
   return (
     <Flex gap="small" vertical={renderVertical}>
+      <Input
+        placeholder="Nombre del conductor"
+        suffix={<UserOutlined />}
+        value={filters.name}
+        name="name"
+        onChange={onChangeInputFilter}
+        allowClear
+        style={{ minWidth: 200 }}
+      />
+
       <Select
         placeholder="Selecciona una sucursal"
         value={filters.branch}
@@ -93,6 +112,7 @@ const Filters = ({ filters, branchOptions, onFilterChange, onFilterReset }) => {
         allowClear
         style={{ minWidth: 200 }}
       />
+
       <Input
         placeholder="Patente"
         suffix={<FileProtectOutlined />}
@@ -101,6 +121,21 @@ const Filters = ({ filters, branchOptions, onFilterChange, onFilterReset }) => {
         onChange={onChangeInputFilter}
         allowClear
         style={{ minWidth: 150 }}
+      />
+
+      <Select
+        placeholder="Disponibilidad"
+        value={filters.is_available}
+        options={[
+          { value: true, label: "Disponible" },
+          { value: false, label: "No disponible" },
+        ]}
+        key="availability"
+        onChange={onSelectAvailability}
+        onClear={onClearAvailability}
+        allowClear
+        style={{ minWidth: 150 }}
+        suffixIcon={<CheckCircleOutlined />}
       />
 
       <Button

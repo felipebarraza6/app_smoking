@@ -13,6 +13,9 @@ const ListCategories = () => {
   const [form] = Form.useForm();
   const dataSource = state.categories?.list || [];
 
+  console.log("🏷️ Categories state:", state.categories);
+  console.log("📋 Categories dataSource:", dataSource);
+
   const onChangeInput = (e) => {
     if (e.target.value.length > 0) {
       controller.category.update(e, dispatch);
@@ -45,12 +48,19 @@ const ListCategories = () => {
         </Form>
       ),
     },
-
+    {
+      title: "Sucursal",
+      render: (x) => (
+        <Row justify={"center"}>
+          <Tag color="blue">{x.branch_name || "Sin asignar"}</Tag>
+        </Row>
+      ),
+    },
     {
       title: "Productos",
       render: (x) => (
         <Row justify={"center"}>
-          <Tag>{x.product_count}</Tag>
+          <Tag>{x.product_count || 0}</Tag>
         </Row>
       ),
     },
@@ -60,7 +70,16 @@ const ListCategories = () => {
           <Popconfirm
             title="¿Estás seguro de eliminar esta categoría ?"
             description="Se eliminaran todos los productos y sus historiales de inventario."
-            onConfirm={() => controller.category.destroy(x.id, dispatch)}
+            onConfirm={async () => {
+              try {
+                console.log("🚀 Starting category deletion for ID:", x.id);
+                await controller.category.destroy(x.id, dispatch);
+                message.success("Categoría eliminada correctamente");
+              } catch (error) {
+                console.error("💥 Category deletion failed:", error);
+                message.error("Error al eliminar la categoría");
+              }
+            }}
             okText="Sí"
             cancelText="No"
           >
@@ -76,7 +95,9 @@ const ListCategories = () => {
   ];
 
   const sortedDataSource = Array.isArray(dataSource)
-    ? [...dataSource].sort((a, b) => b.product_count - a.product_count)
+    ? [...dataSource].sort(
+        (a, b) => (b.product_count || 0) - (a.product_count || 0)
+      )
     : [];
 
   return (

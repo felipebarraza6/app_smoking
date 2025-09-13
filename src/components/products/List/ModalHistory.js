@@ -33,13 +33,13 @@ const ModalHistory = ({ product }) => {
   return (
     <>
       <Modal
-        title={`Historial  ${product.name}(${product.quantity} ${product.type_medition})`}
+        title={`Historial  ${product.name}(${product.quantity} ${product.measurement_unit || 'unidades'})`}
         open={modalHistory}
         width={1000}
         footer={null}
         onCancel={() => setModalHistory(false)}
       >
-        {product.quantity < product.quantity_altert && (
+        {product.quantity < product.quantity_alert && (
           <Text>
             La cantidad de este producto es menor a la cantidad de alerta
           </Text>
@@ -56,12 +56,12 @@ const ModalHistory = ({ product }) => {
       <Button
         size="small"
         type="primary"
-        danger={product.quantity < product.quantity_altert}
+        danger={product.quantity < product.quantity_alert}
         onClick={() => setModalHistory(true)}
         icon={<HistoryOutlined />}
       >
-        {product.quantity} ({product.type_medition.toUpperCase()}){" "}
-        {product.quantity < product.quantity_altert ? <AlertOutlined /> : null}
+        {product.quantity} ({(product.measurement_unit || 'unidades').toUpperCase()}){" "}
+        {product.quantity < product.quantity_alert ? <AlertOutlined /> : null}
       </Button>
     </>
   );

@@ -685,7 +685,7 @@ const Dashboard = () => {
         key: "client",
       },
       {
-        title: "Tienda",
+        title: "Sucursal",
         dataIndex: ["client", "branch", "business_name"],
         key: "branch",
       },
@@ -1535,7 +1535,7 @@ const Dashboard = () => {
               <b>Cliente:</b> {selectedOrder.client?.name || "Sin cliente"}
             </p>
             <p>
-              <b>Tienda:</b>{" "}
+              <b>Sucursal:</b>{" "}
               {selectedOrder.client?.branch?.business_name || "-"}
             </p>
             <p>
@@ -1625,7 +1625,7 @@ const Dashboard = () => {
               <b>Cliente:</b> {selectedPayment.client?.name || "Sin cliente"}
             </p>
             <p>
-              <b>Tienda:</b>{" "}
+              <b>Sucursal:</b>{" "}
               {selectedPayment.client?.branch?.business_name || "-"}
             </p>
             <p>

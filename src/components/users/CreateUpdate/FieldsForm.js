@@ -1,5 +1,16 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Form, Input, Select, Button, Row, message, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Row,
+  Col,
+  message,
+  Card,
+  Space,
+  Typography,
+} from "antd";
 import { rules } from "./rules_form";
 import {
   PlusCircleFilled,
@@ -8,34 +19,87 @@ import {
   RetweetOutlined,
   MailOutlined,
   IdcardOutlined,
-  UserOutlined,
   ProfileOutlined,
   ShopOutlined,
+  UserOutlined,
+  LockOutlined,
+  CrownOutlined,
+  SafetyOutlined,
+  TeamOutlined,
+  CarOutlined,
+  EyeOutlined,
+  DollarOutlined,
+  CalculatorOutlined,
+  PhoneOutlined,
 } from "@ant-design/icons";
 import { MdOutlinePassword } from "react-icons/md";
 import { UsersContext } from "../../../containers/Users";
-import { AppContext } from "../../../App";
 import { controller } from "../../../controllers/users";
 import api from "../../../api/endpoints";
 
 import RUT from "rut-chile";
 
-const USER_TYPES = [
-  { value: "ADM", label: "Administrador del Sistema" },
-  { value: "CL", label: "Cliente" },
-];
+const { Text } = Typography;
 
 const ROLES = [
-  { value: "OWNER", label: "Propietario" },
-  { value: "ADMIN", label: "Administrador" },
-  { value: "MANAGER", label: "Gerente" },
-  { value: "EMPLOYEE", label: "Empleado" },
-  { value: "VIEWER", label: "Solo Lectura" },
+  {
+    value: "OWNER",
+    label: "Propietario",
+    icon: <CrownOutlined />,
+    color: "#faad14",
+  },
+  {
+    value: "ADMIN_LOCAL",
+    label: "Administrador Local",
+    icon: <SafetyOutlined />,
+    color: "#ff4d4f",
+  },
+  {
+    value: "MANAGER",
+    label: "Gerente",
+    icon: <TeamOutlined />,
+    color: "#1890ff",
+  },
+  {
+    value: "EMPLOYEE",
+    label: "Empleado",
+    icon: <UserOutlined />,
+    color: "#52c41a",
+  },
+  {
+    value: "CAJERO",
+    label: "Cajero",
+    icon: <DollarOutlined />,
+    color: "#13c2c2",
+  },
+  {
+    value: "METER",
+    label: "Medidor",
+    icon: <CalculatorOutlined />,
+    color: "#eb2f96",
+  },
+  {
+    value: "RECEIVER",
+    label: "Recepcionista",
+    icon: <PhoneOutlined />,
+    color: "#722ed1",
+  },
+  {
+    value: "DRIVER",
+    label: "Conductor",
+    icon: <CarOutlined />,
+    color: "#fa8c16",
+  },
+  {
+    value: "VIEWER",
+    label: "Solo Lectura",
+    icon: <EyeOutlined />,
+    color: "#8c8c8c",
+  },
 ];
 
 const FieldsForm = ({ form }) => {
   const { dispatch, state } = useContext(UsersContext);
-  const { state: appState } = useContext(AppContext);
   const [availableBranches, setAvailableBranches] = useState([]);
   const [loadingBranches, setLoadingBranches] = useState(false);
 
@@ -49,7 +113,6 @@ const FieldsForm = ({ form }) => {
 
       setAvailableBranches(branches);
     } catch (error) {
-
       message.error("Error al cargar sucursales disponibles");
       setAvailableBranches([]);
     } finally {
@@ -88,87 +151,224 @@ const FieldsForm = ({ form }) => {
   };
 
   return (
-    <>
-      {/* Solo mostrar el select de sucursal al crear, no al editar */}
-      {!state.select_to_edit && (
-        <Form.Item
-          name="branch_id"
-          rules={[{ required: true, message: "Selecciona una tienda" }]}
-        >
-          <Select
-            placeholder="Selecciona una tienda"
-            suffixIcon={<ShopOutlined />}
-            loading={loadingBranches}
-            options={(availableBranches || []).map((b) => ({
-              value: b.branch?.id || b.id,
-              label: b.branch?.business_name || b.business_name,
-            }))}
-          />
-        </Form.Item>
-      )}
-      {/* Select de rol al crear */}
-      {!state.select_to_edit && (
-        <Form.Item
-          name="role"
-          rules={[{ required: true, message: "Selecciona un rol" }]}
-        >
-          <Select placeholder="Selecciona un rol" options={ROLES} />
-        </Form.Item>
-      )}
-      <Divider children="Datos del usuario" />
-      <Form.Item name="first_name" rules={rules_items.first_name}>
-        <Input placeholder="Nombre" prefix={<IdcardOutlined />} />
-      </Form.Item>
-      <Form.Item name="last_name" rules={rules_items.last_name}>
-        <Input placeholder="Apellido" prefix={<IdcardOutlined />} />
-      </Form.Item>
-      <Form.Item name="email" rules={rules_items.email}>
-        <Input placeholder="Email" prefix={<MailOutlined />} />
-      </Form.Item>
-      <Form.Item name="dni" rules={rules.dni}>
-        <Input
-          maxLength={12}
-          placeholder="Rut"
-          onChange={onChangeDni}
-          prefix={<ProfileOutlined />}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="type_user"
-        rules={[{ required: true, message: "Selecciona un tipo de usuario" }]}
+    <Space direction="vertical" size="large" style={{ width: "100%" }}>
+      {/* Configuración de Acceso */}
+      <Card
+        title={
+          <Space>
+            <LockOutlined style={{ color: "#52c41a" }} />
+            <Text strong>Configuración de Acceso</Text>
+          </Space>
+        }
+        size="small"
       >
-        <Select placeholder="Tipo de usuario" options={USER_TYPES} />
-      </Form.Item>
+        {/* Solo mostrar el select de sucursal al crear, no al editar */}
+        {!state.select_to_edit && (
+          <Form.Item
+            name="branch_id"
+            label="Sucursal"
+            rules={[{ required: true, message: "Selecciona una sucursal" }]}
+          >
+            <Select
+              placeholder="Seleccionar sucursal"
+              suffixIcon={<ShopOutlined />}
+              loading={loadingBranches}
+              optionLabelProp="label"
+            >
+              {(availableBranches || []).map((b) => (
+                <Select.Option
+                  key={b.branch?.id || b.id}
+                  value={b.branch?.id || b.id}
+                  label={
+                    <Space>
+                      <ShopOutlined style={{ color: "#1890ff" }} />
+                      {b.branch?.business_name || b.business_name}
+                    </Space>
+                  }
+                >
+                  <Space>
+                    <ShopOutlined style={{ color: "#1890ff" }} />
+                    {b.branch?.business_name || b.business_name}
+                  </Space>
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
 
-      <Form.Item name="password" rules={rules_items.password}>
-        <Input
-          placeholder={state.select_to_edit ? "Nueva contraseña" : "Contraseña"}
-          type="password"
-          prefix={<MdOutlinePassword />}
-        />
-      </Form.Item>
-      <Form.Item
-        name="password_confirmation"
-        rules={rules_items.password_confirmation}
+        {/* Select de rol al crear */}
+        {!state.select_to_edit && (
+          <Form.Item
+            name="role"
+            label="Rol"
+            rules={[{ required: true, message: "Selecciona un rol" }]}
+          >
+            <Select
+              placeholder="Seleccionar rol"
+              optionLabelProp="label"
+            >
+              {ROLES.map((role) => (
+                <Select.Option
+                  key={role.value}
+                  value={role.value}
+                  label={
+                    <Space>
+                      <span style={{ color: role.color }}>{role.icon}</span>
+                      {role.label}
+                    </Space>
+                  }
+                >
+                  <Space>
+                    <span style={{ color: role.color }}>{role.icon}</span>
+                    {role.label}
+                  </Space>
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+        )}
+      </Card>
+
+      {/* Información Personal */}
+      <Card
+        title={
+          <Space>
+            <UserOutlined style={{ color: "#1890ff" }} />
+            <Text strong>Información Personal</Text>
+          </Space>
+        }
+        size="small"
       >
-        <Input
-          placeholder={"Confirmación de contraseña"}
-          type="password"
-          prefix={<MdOutlinePassword />}
-        />
-      </Form.Item>
-      <Form.Item>
-        <Row justify={"space-evenly"} gutter={[{ xs: 12, xl: 12 }, {}]}>
-          <Button htmlType="submit" type={"primary"} icon={iconBtnLeft}>
-            {state.select_to_edit ? "Actualizar" : "Crear"}
-          </Button>
-          <Button onClick={onClickCreateOrClear} icon={iconBtnRight}>
-            {state.select_to_edit ? "Crear" : "Limpiar"}
-          </Button>
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="first_name"
+              label="Nombre"
+              rules={rules_items.first_name}
+            >
+              <Input
+                placeholder="Nombre del usuario"
+                prefix={<IdcardOutlined />}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="last_name"
+              label="Apellido"
+              rules={rules_items.last_name}
+            >
+              <Input
+                placeholder="Apellido del usuario"
+                prefix={<IdcardOutlined />}
+              />
+            </Form.Item>
+          </Col>
         </Row>
-      </Form.Item>
-    </>
+
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item name="email" label="Email" rules={rules_items.email}>
+              <Input
+                placeholder="email@ejemplo.com"
+                prefix={<MailOutlined />}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item name="dni" label="RUT" rules={rules.dni}>
+              <Input
+                maxLength={12}
+                placeholder="12.345.678-9"
+                onChange={onChangeDni}
+                prefix={<ProfileOutlined />}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Card>
+
+      {/* Contraseñas */}
+      <Card
+        title={
+          <Space>
+            <MdOutlinePassword style={{ color: "#faad14" }} />
+            <Text strong>Contraseña</Text>
+          </Space>
+        }
+        size="small"
+      >
+        <Row gutter={16}>
+          <Col span={12}>
+            <Form.Item
+              name="password"
+              label="Contraseña"
+              rules={rules_items.password}
+            >
+              <Input
+                placeholder={
+                  state.select_to_edit
+                    ? "Nueva contraseña"
+                    : "Mínimo 8 caracteres"
+                }
+                type="password"
+                prefix={<MdOutlinePassword />}
+              />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              name="password_confirmation"
+              label="Confirmar Contraseña"
+              rules={rules_items.password_confirmation}
+            >
+              <Input
+                placeholder="Repetir contraseña"
+                type="password"
+                prefix={<MdOutlinePassword />}
+              />
+            </Form.Item>
+          </Col>
+        </Row>
+      </Card>
+
+      {/* Botones de Acción */}
+      <Card
+        size="small"
+      >
+        <Row justify="space-between" align="middle">
+          <Col>
+            {state.select_to_edit && (
+              <Button
+                icon={<ArrowLeftOutlined />}
+                onClick={() =>
+                  controller.create_update_form.clear_selection(dispatch)
+                }
+              >
+                Cancelar Edición
+              </Button>
+            )}
+          </Col>
+          <Col>
+            <Space>
+              <Button
+                onClick={onClickCreateOrClear}
+                icon={iconBtnRight}
+              >
+                {state.select_to_edit ? "Crear" : "Limpiar"}
+              </Button>
+              <Button
+                htmlType="submit"
+                type="primary"
+                icon={iconBtnLeft}
+              >
+                {state.select_to_edit ? "Actualizar" : "Crear"}
+              </Button>
+            </Space>
+          </Col>
+        </Row>
+      </Card>
+    </Space>
   );
 };
 

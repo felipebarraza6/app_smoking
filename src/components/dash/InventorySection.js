@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Card,
   Row,
@@ -25,36 +25,44 @@ import api from "../../api/endpoints";
 const { Title, Text } = Typography;
 
 const InventorySection = ({ inventoryData, summary = {}, loading = false }) => {
-  const [data, setData] = useState([]);
-  const [summaryData, setSummaryData] = useState({});
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (
-      inventoryData &&
-      inventoryData.data &&
-      Array.isArray(inventoryData.data)
-    ) {
-      setData(inventoryData.data);
-    } else if (inventoryData && Array.isArray(inventoryData)) {
-      setData(inventoryData);
-    } else {
-      setData([]);
+  // Memorizar los datos procesados para evitar re-renders innecesarios
+  const data = useMemo(() => {
+    // Si no hay inventoryData, retornar array vacío inmediatamente
+    if (!inventoryData) {
+      return [];
     }
+
+    if (inventoryData.data && Array.isArray(inventoryData.data)) {
+      return inventoryData.data;
+    } else if (Array.isArray(inventoryData)) {
+      return inventoryData;
+    }
+    return [];
   }, [inventoryData]);
 
-  useEffect(() => {
+  const summaryData = useMemo(() => {
+    // Priorizar inventoryData.summary si existe
     if (
       inventoryData &&
       inventoryData.summary &&
+      typeof inventoryData.summary === "object" &&
       Object.keys(inventoryData.summary).length > 0
     ) {
-      setSummaryData(inventoryData.summary);
-    } else if (summary && Object.keys(summary).length > 0) {
-      setSummaryData(summary);
-    } else {
-      setSummaryData({});
+      return inventoryData.summary;
     }
+
+    // Fallback a summary prop si existe
+    if (
+      summary &&
+      typeof summary === "object" &&
+      Object.keys(summary).length > 0
+    ) {
+      return summary;
+    }
+
+    return {};
   }, [inventoryData, summary]);
 
   const getStockStatusColor = (item) => {

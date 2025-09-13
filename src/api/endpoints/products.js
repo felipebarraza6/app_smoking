@@ -1,12 +1,12 @@
 import { GET, POST, PATCH, DELETE } from "../config";
 
 export const create = async (data) => {
-  const response = await POST("core/products/", data);
+  const response = await POST("inventory/products/", data);
   return response;
 };
 
 export const list = async (page, filters) => {
-  let url = `core/products/?page=${page}`;
+  let url = `inventory/products/?page=${page}`;
 
   if (filters.search) {
     url += `&name__icontains=${filters.search}`;
@@ -35,32 +35,32 @@ export const list = async (page, filters) => {
 };
 
 export const update = async (id, data) => {
-  const response = await PATCH(`core/products/${id}/`, data);
+  const response = await PATCH(`inventory/products/${id}/`, data);
   return response;
 };
 
 export const destroy = async (id) => {
-  const response = await DELETE(`core/products/${id}/`);
+  const response = await DELETE(`inventory/products/${id}/`);
   return response;
 };
 
 const create_category = async (data) => {
-  const response = await POST("core/products-categories/", data);
+  const response = await POST("inventory/categories/", data);
   return response;
 };
 
 const list_category = async () => {
-  const response = await GET("core/products-categories/");
+  const response = await GET("inventory/categories/");
   return response.data;
 };
 
 const update_category = async (id, data) => {
-  const response = await PATCH(`core/products-categories/${id}/`, data);
+  const response = await PATCH(`inventory/categories/${id}/`, data);
   return response;
 };
 
 const destroy_category = async (id) => {
-  const response = await DELETE(`core/products-categories/${id}/`);
+  const response = await DELETE(`inventory/categories/${id}/`);
   return response;
 };
 

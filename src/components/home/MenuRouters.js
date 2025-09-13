@@ -12,11 +12,12 @@ import {
   FcAcceptDatabase,
   FcMoneyTransfer,
   FcCustomerSupport,
-  FcInTransit,
   FcRules,
   FcBullish,
   FcCalculator,
   FcInfo,
+  FcGallery,
+  FcEngineering,
 } from "react-icons/fc";
 
 const MenuRouters = ({ onOptionClick }) => {
@@ -42,6 +43,11 @@ const MenuRouters = ({ onOptionClick }) => {
         key: "/app/orders-management",
       },
       {
+        label: "Mediciones",
+        icon: <FcEngineering />,
+        key: "/app/measurements",
+      },
+      {
         label: "Atención al cliente",
         key: "sub2",
         icon: <FcCustomerSupport />,
@@ -60,11 +66,11 @@ const MenuRouters = ({ onOptionClick }) => {
         key: "sub1",
         children: [
           { key: "/app/users", icon: <FcManager />, label: "Usuarios" },
-          { key: "/app/branchs", icon: <FcShop />, label: "Tiendas" },
+          { key: "/app/branchs", icon: <FcShop />, label: "Sucursales" },
           {
-            key: "/app/products",
-            icon: <FcPackage />,
-            label: "Productos e inventario",
+            key: "/app/type-payments",
+            icon: <FcCurrencyExchange />,
+            label: "Métodos de pago",
           },
           {
             key: "/app/clients",
@@ -72,14 +78,9 @@ const MenuRouters = ({ onOptionClick }) => {
             label: "Clientes/contactos",
           },
           {
-            key: "/app/drivers",
-            icon: <FcInTransit />,
-            label: "Repartidores",
-          },
-          {
-            key: "/app/type-payments",
-            icon: <FcCurrencyExchange />,
-            label: "Métodos de pago",
+            key: "/app/products",
+            icon: <FcPackage />,
+            label: "Productos",
           },
         ],
       },

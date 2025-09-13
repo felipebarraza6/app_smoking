@@ -86,37 +86,96 @@ const Payments = () => {
   };
 
   const fetchTypePayments = async () => {
-    const response = await api.payments.type_payments
-      .list()
-      .then((response) => {
+    try {
+      // Usar sistema unificado
+      const response = await api.finance.payment_methods.list_active({
+        branch: state.branchs.selected?.id
+      });
+      
+      dispatch({
+        type: "add_type_payments",
+        payload: response.results || response || [],
+      });
+      
+      return response.results || response || [];
+    } catch (error) {
+      console.error("Error fetching payment methods:", error);
+      
+      // Fallback a sistema legacy
+      try {
+        const legacyResponse = await api.finance.legacy_type_payments.list({
+          branch: state.branchs.selected?.id
+        });
+        
         dispatch({
           type: "add_type_payments",
-          payload: response.results,
+          payload: legacyResponse.results || [],
         });
-        return response.results;
-      });
+        
+        return legacyResponse.results || [];
+      } catch (legacyError) {
+        console.error("Error with legacy payment methods:", legacyError);
+        return [];
+      }
+    }
   };
 
   useEffect(() => {
     fetchTypePayments();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Función para finalizar venta y mostrar boleta
   const handleFinishSale = async () => {
     try {
-      // Crear los pagos
-      await api.payments.bulk.create(state.payments.list);
+      let updatedOrder = null;
 
-      // Actualizar la orden como pagada
-      const updatedOrder = await api.orders.update(state.order.create_id, {
-        is_pay: true,
-        is_active: true,
+      // Crear los pagos individualmente usando sistema unificado
+      const paymentPromises = state.payments.list.map(async (payment) => {
+        try {
+          // Intentar usar sistema unificado primero
+          return await api.finance.payments.create({
+            payment_method_id: payment.payment_method_id || payment.type_payment,
+            order_id: state.order.create_id,
+            amount: payment.amount.toString(),
+            reference: payment.reference || "",
+            notes: payment.notes || "",
+            branch_id: state.branchs.selected?.id
+          });
+        } catch (error) {
+          console.warn("Finance API failed, trying legacy bulk create:", error);
+          // Fallback a sistema legacy como último recurso
+          throw error;
+        }
       });
+      
+      try {
+        // Ejecutar todos los pagos
+        await Promise.all(paymentPromises);
+        
+        // El payment_status se actualiza automáticamente en el backend
+        // Solo necesitamos marcar la orden como activa
+        updatedOrder = await api.orders.update(state.order.create_id, {
+          is_active: true,
+          // No actualizar is_pay manualmente - se calcula automáticamente
+        });
+        
+      } catch (financeError) {
+        console.warn("Finance payments failed, using legacy fallback:", financeError);
+        
+        // Fallback completo a sistema legacy
+        await api.finance.legacy_payments.bulk_create(state.payments.list);
+        
+        // Actualizar orden manualmente en sistema legacy
+        updatedOrder = await api.orders.update(state.order.create_id, {
+          is_pay: true,
+          is_active: true,
+        });
+      }
 
       // Preparar datos completos para la boleta
       const saleDataForReceipt = {
         id: state.order.create_id,
-        ...updatedOrder.data,
+        ...(updatedOrder?.data || {}),
         // Asegurar que se incluyan los datos del contexto si no están en la respuesta del backend
         branch: state.branchs.selected,
         client: state.clients.selected,

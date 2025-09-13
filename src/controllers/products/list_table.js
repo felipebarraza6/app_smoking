@@ -50,29 +50,107 @@ export const resetFilterSelects = (dispatch) => {
 };
 
 export const createCategory = async (values, dispatch, form) => {
-  await categories.create(values).then((x) => {
-    dispatch({
-      type: "update_list",
-    });
+  try {
+    console.log("➕ Creating category:", values);
+    const response = await categories.create(values);
+    console.log("✅ Category created successfully:", response);
+    
+    // Recargar las categorías directamente después de crear una nueva
+    try {
+      const response = await categories.list();
+      console.log("✅ Categories reloaded after creation:", response);
+      
+      const categoriesData = response?.results || response || [];
+      dispatch({
+        type: "set_categories",
+        payload: {
+          categories: categoriesData,
+        },
+      });
+    } catch (reloadError) {
+      console.error("❌ Error reloading categories after creation:", reloadError);
+    }
+    
     form.resetFields();
-  });
+    
+    return { success: true, data: response };
+  } catch (error) {
+    console.error("❌ Error creating category:", error);
+    console.error("❌ Create error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
+    });
+    return { success: false, error };
+  }
 };
 
 export const destroyCategory = async (id, dispatch) => {
-  await categories.destroy(id).then((x) => {
-    dispatch({
-      type: "update_list",
+  try {
+    console.log("🗑️ Deleting category with ID:", id);
+    await categories.destroy(id);
+    console.log("✅ Category deleted successfully");
+    
+    // Recargar las categorías directamente después de eliminar
+    try {
+      const response = await categories.list();
+      console.log("✅ Categories reloaded after deletion:", response);
+      
+      const categoriesData = response?.results || response || [];
+      console.log("📊 Processed categories data:", categoriesData);
+      
+      dispatch({
+        type: "set_categories",
+        payload: {
+          categories: categoriesData,
+        },
+      });
+    } catch (reloadError) {
+      console.error("❌ Error reloading categories after deletion:", reloadError);
+      // Mantener el estado actual si no se pueden recargar las categorías
+      // No cambiar nada en lugar de romper la UI
+    }
+  } catch (error) {
+    console.error("❌ Error deleting category:", error);
+    console.error("❌ Delete error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
     });
-  });
+    // No hacer nada si la eliminación falla - mantener el estado actual
+  }
 };
 
 export const updateCategory = async (e, dispatch) => {
-  var payload = {
-    name: e.target.value,
-  };
-  await categories.update(e.target.name, payload).then((x) => {
-    dispatch({
-      type: "update_list",
+  try {
+    const payload = {
+      name: e.target.value,
+    };
+    console.log("✏️ Updating category ID:", e.target.name, "with:", payload);
+    await categories.update(e.target.name, payload);
+    console.log("✅ Category updated successfully");
+    
+    // Recargar las categorías directamente después de actualizar
+    try {
+      const response = await categories.list();
+      console.log("✅ Categories reloaded after update:", response);
+      
+      const categoriesData = response?.results || response || [];
+      dispatch({
+        type: "set_categories",
+        payload: {
+          categories: categoriesData,
+        },
+      });
+    } catch (reloadError) {
+      console.error("❌ Error reloading categories after update:", reloadError);
+    }
+  } catch (error) {
+    console.error("❌ Error updating category:", error);
+    console.error("❌ Update error details:", {
+      message: error.message,
+      response: error.response?.data,
+      status: error.response?.status,
     });
-  });
+  }
 };

@@ -148,9 +148,11 @@ const deleteClient = async (state, dispatch, notification) => {
 const getClients = async (state, dispatch, setLoading) => {
   setLoading(true);
   try {
+    console.log("🔄 Loading clients with filters:", state.filters);
 
     // Cargar clientes (las sucursales ya vienen incluidas en la respuesta)
     const clientsResponse = await list(state.list.page, state.filters);
+    console.log("✅ Clients response:", clientsResponse);
 
     // Verificar que la respuesta tenga la estructura esperada
     const payload = {
@@ -159,11 +161,13 @@ const getClients = async (state, dispatch, setLoading) => {
       branchs: clientsResponse?.branchs || [], // Las sucursales vienen del backend
     };
 
+    console.log("📋 Final payload to dispatch:", payload);
     dispatch({
       type: "add",
       payload: payload,
     });
   } catch (error) {
+    console.error("❌ Error loading clients:", error);
 
     // En caso de error, enviar datos vacíos
     dispatch({

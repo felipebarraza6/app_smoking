@@ -1,17 +1,18 @@
 export const saleReducer = (state, action) => {
   switch (action.type) {
     case "add_branchs":
+      const branchList = Array.isArray(action.payload) ? action.payload : (action.payload.results || []);
       var selected_branch = null;
       if (!selected_branch) {
-        selected_branch = action.payload.length > 0 ? action.payload[0] : null;
+        selected_branch = branchList.length > 0 ? branchList[0] : null;
       }
 
       return {
         ...state,
         branchs: {
           ...state.branchs,
-          list: action.payload,
-          count: action.payload.length,
+          list: branchList,
+          count: action.payload.count || branchList.length,
           selected: selected_branch,
         },
       };

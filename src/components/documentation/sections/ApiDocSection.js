@@ -121,7 +121,7 @@ Headers: Authorization: Token TOKEN_AQUI`}</CodeBlock>
       </Paragraph>
       <Divider />
       <Title level={4} style={{ marginTop: 24 }}>
-        Tiendas (Stores)
+        Sucursales (Stores)
       </Title>
       <Paragraph>Endpoints para listar y crear tiendas:</Paragraph>
       <CodeBlock isDark={false} method="GET" status={200}>{`/api/core/stores/

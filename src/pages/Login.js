@@ -4,7 +4,6 @@ import {
   Form,
   Input,
   Button,
-  Card,
   Typography,
   Divider,
   message,
@@ -17,15 +16,12 @@ import { useNavigate } from "react-router-dom";
 import { AppContext } from "../App";
 import api from "../api/endpoints";
 import logo from "../assets/img/logo.png";
-import Logo from "./../components/home/Logo";
+import Logo from "../components/home/Logo";
 import {
   loginContainer,
   formElements,
-  titleContainer,
   formContainer,
 } from "../assets/styles/pages/LoginStyles";
-
-const { Title } = Typography;
 
 const Login = () => {
   const [form] = Form.useForm();
@@ -47,7 +43,6 @@ const Login = () => {
       const user = response.data.user || null;
       dispatch({ type: "LOGIN", payload: { token, user } });
       if (token) {
-        message.success("¡Inicio de sesión exitoso!");
         navigate("/app/");
       } else {
         message.error("No se recibió token de autenticación.");

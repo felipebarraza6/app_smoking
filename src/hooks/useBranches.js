@@ -25,6 +25,9 @@ const useBranches = (options = {}) => {
   const [lastFetch, setLastFetch] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Inicialización inmediata con datos del contexto si están disponibles
+  const [initialized, setInitialized] = useState(false);
+
   // Verificar si los datos están en caché
   const isDataStale = useMemo(() => {
     if (!lastFetch) return true;
@@ -67,6 +70,7 @@ const useBranches = (options = {}) => {
           setBranches(processedBranches);
           setLastFetch(Date.now());
           setLoading(false);
+          setInitialized(true);
           if (onSuccess) onSuccess(processedBranches);
           return processedBranches;
         }
@@ -79,6 +83,7 @@ const useBranches = (options = {}) => {
         setBranches(processedBranches);
         setLastFetch(Date.now());
         setLoading(false);
+        setInitialized(true);
 
         if (onSuccess) onSuccess(processedBranches);
         return processedBranches;
@@ -202,12 +207,27 @@ const useBranches = (options = {}) => {
     setSearchTerm("");
   }, []);
 
+  // Inicialización inmediata con datos del contexto
+  useEffect(() => {
+    if (!initialized && appState?.branches && Array.isArray(appState.branches) && appState.branches.length > 0) {
+      const contextBranches = getBranchesFromContext();
+      if (contextBranches.length > 0) {
+        const processedBranches = processBranches(contextBranches);
+        setBranches(processedBranches);
+        setLastFetch(Date.now());
+        setLoading(false);
+        setInitialized(true);
+        if (onSuccess) onSuccess(processedBranches);
+      }
+    }
+  }, [appState?.branches, initialized, getBranchesFromContext, processBranches, onSuccess]);
+
   // Cargar datos automáticamente si está habilitado
   useEffect(() => {
-    if (autoFetch) {
+    if (autoFetch && !initialized) {
       fetchBranches();
     }
-  }, [autoFetch, fetchBranches]);
+  }, [autoFetch, fetchBranches, initialized]);
 
   // Sincronizar con contexto global cuando cambie
   useEffect(() => {

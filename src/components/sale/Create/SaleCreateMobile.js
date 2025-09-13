@@ -15,7 +15,7 @@ import { ReloadOutlined } from "@ant-design/icons";
 const SaleCreateMobile = () => {
   const { state, dispatch } = useContext(SaleContext);
   const { message } = App.useApp();
-  const branchs = state.branchs.list;
+  const branchs = state.branchs?.list || [];
   const selected_branch = state.branchs.selected;
 
   useEffect(() => {
@@ -23,7 +23,9 @@ const SaleCreateMobile = () => {
   }, []);
 
   const onChangeTab = (key) => {
-    const get_branch = branchs.find((branch) => branch.id === key);
+    const get_branch = Array.isArray(branchs)
+      ? branchs.find((branch) => branch.id === key)
+      : null;
     dispatch({
       type: "selected_branch",
       payload: get_branch,
@@ -103,13 +105,17 @@ const SaleCreateMobile = () => {
         title={titleCard}
         size="small"
         activeTabKey={selected_branch?.id}
-        tabList={branchs.map((branch) => ({
-          key: branch.id,
-          label:
-            branch.business_name.length > 10
-              ? `${branch.business_name.slice(0, 10).toUpperCase()}...`
-              : branch.business_name.toUpperCase(),
-        }))}
+        tabList={
+          Array.isArray(branchs)
+            ? branchs.map((branch) => ({
+                key: branch.id,
+                label:
+                  branch.business_name.length > 10
+                    ? `${branch.business_name.slice(0, 10).toUpperCase()}...`
+                    : branch.business_name.toUpperCase(),
+              }))
+            : []
+        }
         style={{ minHeight: "70vh", padding: 0, width: "100%" }}
         tabProps={tabProps}
         onTabChange={onChangeTab}

@@ -102,7 +102,7 @@ class ErrorBoundary extends React.Component {
                 🔄 Recargar página
               </button>
               <button
-                onClick={() => (window.location.href = "/login")}
+                onClick={() => (window.location.href = "/")}
                 style={{
                   padding: "12px 24px",
                   backgroundColor: "#1890ff",
@@ -113,7 +113,7 @@ class ErrorBoundary extends React.Component {
                   fontSize: "16px",
                 }}
               >
-                🔐 Ir al login
+                🔐 Ir al inicio
               </button>
             </div>
 

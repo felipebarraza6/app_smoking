@@ -141,9 +141,8 @@ const HeaderUser = React.memo(
               icon={
                 <RocketOutlined
                   style={{
-                    color: isConnected ? token.colorSuccess : "#ff4d4f",
                     filter: isConnected
-                      ? `drop-shadow(0 0 8px ${token.colorSuccess}88)`
+                      ? `drop-shadow(0 0 8px ${token.colorPrimary}88)`
                       : undefined,
                   }}
                 />
@@ -158,22 +157,16 @@ const HeaderUser = React.memo(
                   ? "white"
                   : "transparent",
                 color: isActiveRoute("/app/status") ? "black" : "white",
-                boxShadow: isConnected
-                  ? `0 0 0 0 ${token.colorSuccess}44`
-                  : undefined,
+                boxShadow: isConnected ? `white` : undefined,
                 animation: isConnected
                   ? "pulseGlow 1.2s infinite alternate"
                   : "none",
-                border: isConnected
-                  ? `1.5px solid ${token.colorSuccess}`
-                  : undefined,
               }}
             >
-              Status
               <style>{`
                 @keyframes pulseGlow {
-                  0% { box-shadow: 0 0 0 0 ${token.colorSuccess}44; }
-                  100% { box-shadow: 0 0 16px 4px ${token.colorSuccess}88; }
+                  0% { box-shadow: 0 0 0 0 ${token.colorPrimary}44; }
+                  100% { box-shadow: 0 0 16px 4px ${token.colorPrimary}88; }
                 }
               `}</style>
             </Button>

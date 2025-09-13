@@ -4,7 +4,7 @@ import {
   getProducts,
   getClients,
   getDrivers,
-} from "../controllers/sales/list_resources";
+} from "./sales/list_resources";
 
 const createSale = async (values, dispatch, form, notification) => {
   await create(values)

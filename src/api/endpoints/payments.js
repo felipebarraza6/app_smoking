@@ -1,31 +1,40 @@
 import { GET, POST, PATCH, DELETE } from "../config";
 
+// NOTA: Los endpoints de payments están DEPRECATED en el backend
+// Los pagos ahora se manejan dentro del modelo Order directamente
 export const create = async (data) => {
-  const response = await POST("core/payments/", data);
+  console.warn("payments endpoint está DEPRECATED. Los pagos se manejan en orders.");
+  const response = await POST("sales/payments/", data);
   return response;
 };
 
 export const list = async () => {
-  const response = await GET("core/payments/");
+  console.warn("payments endpoint está DEPRECATED. Los pagos se obtienen desde orders.");
+  const response = await GET("sales/payments/");
   return response.data;
 };
 
 export const update = async (id, data) => {
-  const response = await PATCH(`core/payments/${id}/`, data);
+  console.warn("payments endpoint está DEPRECATED. Actualizar order directamente.");
+  const response = await PATCH(`sales/payments/${id}/`, data);
   return response;
 };
 
 export const destroy = async (id) => {
-  const response = await DELETE(`core/payments/${id}/`);
+  console.warn("payments endpoint está DEPRECATED. Modificar order directamente.");
+  const response = await DELETE(`sales/payments/${id}/`);
   return response;
 };
 
+// NOTA: type_payments también está DEPRECATED
 const create_category = async (data) => {
-  const response = await POST("core/type_payments/", data);
+  console.warn("type_payments endpoint está DEPRECATED.");
+  const response = await POST("sales/type-payments/", data);
   return response;
 };
 
 const list_category = async (filters = {}) => {
+  console.warn("type_payments endpoint está DEPRECATED.");
   const params = new URLSearchParams();
 
   if (filters.branch) {
@@ -48,25 +57,27 @@ const list_category = async (filters = {}) => {
 
   const url =
     filters && Object.keys(filters).length > 0
-      ? `core/type_payments/?${params.toString()}`
-      : "core/type_payments/";
+      ? `sales/type-payments/?${params.toString()}`
+      : "sales/type-payments/";
 
   const response = await GET(url);
   return response.data;
 };
 
 const update_category = async (id, data) => {
-  const response = await PATCH(`core/type_payments/${id}/`, data);
+  console.warn("type_payments endpoint está DEPRECATED.");
+  const response = await PATCH(`sales/type-payments/${id}/`, data);
   return response;
 };
 
 const destroy_category = async (id) => {
-  const response = await DELETE(`core/type_payments/${id}/`);
+  console.warn("type_payments endpoint está DEPRECATED.");
+  const response = await DELETE(`sales/type-payments/${id}/`);
   return response;
 };
 
 export const create_bulk = async (data) => {
-  const response = await POST("core/payments/create_multiple/", data);
+  const response = await POST("sales/payments/create_multiple/", data);
   return response;
 };
 

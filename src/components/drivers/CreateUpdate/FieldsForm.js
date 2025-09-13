@@ -87,7 +87,10 @@ const FieldsForm = ({ form }) => {
       </Form.Item>
       <Form.Item name="branch" rules={rules_items.branch}>
         <Select placeholder="Sucursal">
-          {state.branchs.map((branch) => (
+          {(state.branchs && Array.isArray(state.branchs)
+            ? state.branchs
+            : []
+          ).map((branch) => (
             <Select.Option key={branch.id} value={branch.id}>
               {branch.business_name}
             </Select.Option>

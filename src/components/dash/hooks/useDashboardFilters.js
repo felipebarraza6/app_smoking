@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import dayjs from "dayjs";
 import useBranches from "../../../hooks/useBranches";
 
@@ -10,21 +10,28 @@ const getLastMonthRange = () => {
 };
 
 export const useDashboardFilters = () => {
-  const { branches } = useBranches();
+  const { branches, loading: branchesLoading } = useBranches();
   const [filters, setFilters] = useState(null);
 
   useEffect(() => {
-    if (branches) {
+    if (branches && branches.length > 0 && !filters) {
+      // Solo inicializar si no hay filtros previos
       setFilters({
         branch_ids: branches.map((b) => b.id),
         dates: getLastMonthRange(),
       });
     }
-  }, [branches]);
+  }, [branches, filters]);
+
+  // Memorizamos setFilters para evitar re-renders innecesarios
+  const updateFilters = useCallback((newFilters) => {
+    setFilters(newFilters);
+  }, []);
 
   return {
     branches: branches || [],
     filters,
-    setFilters,
+    setFilters: updateFilters,
+    loading: branchesLoading,
   };
 };

@@ -13,25 +13,10 @@ import {
 } from "antd";
 import { UserOutlined, TeamOutlined, PlusOutlined } from "@ant-design/icons";
 import api from "../../../api/endpoints";
+import { ROLE_COLORS, ROLE_LABELS } from "../../../utils/roles";
 
 const { Option } = Select;
 const { Text } = Typography;
-
-const ROLE_COLORS = {
-  OWNER: "gold",
-  ADMIN: "red",
-  MANAGER: "blue",
-  EMPLOYEE: "green",
-  VIEWER: "default",
-};
-
-const ROLE_LABELS = {
-  OWNER: "Propietario",
-  ADMIN: "Administrador",
-  MANAGER: "Gerente",
-  EMPLOYEE: "Empleado",
-  VIEWER: "Solo Lectura",
-};
 
 const AssignExistingUserModal = ({ visible, onClose, branch, onSuccess }) => {
   const [form] = Form.useForm();

@@ -3,6 +3,7 @@ import { Form, Upload, Row, Col, Button } from "antd";
 import { FileImageFilled, CloseCircleFilled } from "@ant-design/icons";
 
 import { BranchsContext } from "../../../../containers/Branchs";
+import { DEVURL } from "../../../../api/config";
 
 const UploadLogo = ({ form }) => {
   const { state, dispatch } = React.useContext(BranchsContext);
@@ -23,6 +24,18 @@ const UploadLogo = ({ form }) => {
     });
   };
 
+  // Función para construir la URL completa del logo
+  const getLogoUrl = (logoPath) => {
+    if (!logoPath) return null;
+    if (typeof logoPath !== "string") return URL.createObjectURL(logoPath);
+    if (logoPath.startsWith("http")) return logoPath;
+
+    // Construir URL completa usando la base URL de la API
+    const baseUrl = DEVURL.replace("/api/", "");
+    const cleanPath = logoPath.startsWith("/") ? logoPath : `/${logoPath}`;
+    return `${baseUrl}${cleanPath}`;
+  };
+
   return (
     <Row justify={"end"} gutter={[0, 10]}>
       <Col span={24}>
@@ -36,15 +49,26 @@ const UploadLogo = ({ form }) => {
           }}
         >
           {logo ? (
-            <>
+            <div style={{ textAlign: "center" }}>
               <img
-                src={
-                  typeof logo === "string" ? logo : URL.createObjectURL(logo)
-                }
+                src={getLogoUrl(logo)}
                 alt="logo"
-                width={"50px"}
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  objectFit: "contain",
+                  borderRadius: "4px",
+                  marginBottom: "8px",
+                }}
+                onError={(e) => {
+                  console.log("Error loading image:", e.target.src);
+                  e.target.style.display = "none";
+                }}
               />
-            </>
+              <div style={{ fontSize: "12px", color: "#666" }}>
+                {typeof logo === "string" ? "Logo actual" : "Nuevo logo"}
+              </div>
+            </div>
           ) : (
             <Row align={"middle"} justify={"center"}>
               <FileImageFilled

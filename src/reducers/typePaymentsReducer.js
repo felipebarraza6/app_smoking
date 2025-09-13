@@ -8,14 +8,17 @@ export const typePaymentsReducer = (state, action) => {
           results: action.payload.results,
           count: action.payload.count,
         },
-        branchs: {
-          ...state.branchs,
-          list: action.payload.branchs || [],
-          count: (action.payload.branchs || []).length,
-        },
+        // Solo actualizar branchs si vienen en el payload
+        ...(action.payload.branchs && {
+          branchs: {
+            list: action.payload.branchs,
+            count: action.payload.branchs.length,
+          },
+        }),
       };
 
     case "update_list":
+      console.log("🔄 Updating list, countUpdate:", state.countUpdate + 1);
       return {
         ...state,
         countUpdate: state.countUpdate + 1,
@@ -46,6 +49,15 @@ export const typePaymentsReducer = (state, action) => {
         list: {
           ...state.list,
           page: 1,
+        },
+      };
+
+    case "set_branchs":
+      return {
+        ...state,
+        branchs: {
+          list: action.payload.list,
+          count: action.payload.count,
         },
       };
 

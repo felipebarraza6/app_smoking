@@ -11,23 +11,29 @@ import {
 } from "./type_payments/create_update_form";
 
 const createTypePayment = async (values, dispatch, form, notification) => {
-  await type_payments
-    .create(values)
-    .then(() => {
-      dispatch({
-        type: "update_list",
-      });
+  try {
+    await type_payments.create(values);
 
-      form.resetFields();
-    })
-    .catch((e) => {
-      const errors = e.response.data;
-      const errorList = Object.keys(errors).map((key) => errors[key]);
-      notification.error({
-        message: "Errores al activar el nuevo método de pago.",
-        description: errorList.join(", "),
-      });
+    notification.success({
+      message: "Método de pago creado exitosamente.",
     });
+
+    // Actualizar la lista
+    dispatch({
+      type: "update_list",
+    });
+
+    // Limpiar el formulario
+    form.resetFields();
+  } catch (e) {
+    const errors = e.response?.data || { error: "Error desconocido" };
+    const errorList = Object.keys(errors).map((key) => errors[key]);
+
+    notification.error({
+      message: "Errores al crear el nuevo método de pago.",
+      description: errorList.join(", "),
+    });
+  }
 };
 
 const updateTypePayment = async (
@@ -90,6 +96,8 @@ const deleteTypePayment = async (type_payment, dispatch, notification) => {
 const getTypePayments = async (state, dispatch) => {
   try {
     const response = await type_payments.list(state.list.page, state.filters);
+    console.log("📋 TypePayments response:", response);
+
     // Verificar que la respuesta tenga la estructura esperada
     const payload = {
       results: response?.results || response?.data || [],
@@ -101,6 +109,7 @@ const getTypePayments = async (state, dispatch) => {
       payload: payload,
     });
   } catch (error) {
+    console.error("Error loading payment methods:", error);
 
     // En caso de error, enviar datos vacíos
     dispatch({

@@ -4,7 +4,9 @@ import * as drivers from "./endpoints/drivers";
 import * as clients from "./endpoints/clients";
 import * as orders from "./endpoints/orders";
 import * as payments from "./endpoints/payments";
+import * as finance from "./endpoints/finance";
 import * as branchs from "./endpoints/branchs";
+import * as measurements from "./endpoints/measurements";
 import dashboardEndpoints from "./endpoints/dashboard";
 
 const api = {
@@ -24,6 +26,8 @@ const api = {
     change_password: users.change_password,
     toggle_user_status: users.toggle_user_status,
     change_user_role: users.change_user_role,
+    toggle_branch_assignment_status: users.toggle_branch_assignment_status,
+    change_assignment_role: users.change_assignment_role,
   },
   branchs: {
     list: branchs.list,
@@ -33,11 +37,13 @@ const api = {
     retrieve: branchs.retrieve,
     my_branches: branchs.my_branches,
     my_branches_for_filters: branchs.my_branches_for_filters,
+    my_branches_select: branchs.my_branches_select,
     get_branch_users: branchs.get_branch_users,
     invite_user: branchs.invite_user,
     update_user_role: branchs.update_user_role,
     remove_user: branchs.remove_user,
     toggle_user_status: branchs.toggle_user_status,
+    change_user_branch: branchs.change_user_branch,
     my_invitations: branchs.my_invitations,
     accept_invitation: branchs.accept_invitation,
     reject_invitation: branchs.reject_invitation,
@@ -66,7 +72,14 @@ const api = {
     create: drivers.create,
     update: drivers.update,
     delete: drivers.destroy,
+    retrieve: drivers.retrieve,
     total: drivers.list_all,
+    // Nuevos endpoints del sistema DriverProfile
+    get_available_drivers: drivers.get_available_drivers,
+    calculate_delivery_cost: drivers.calculate_delivery_cost,
+    get_driver_performance: drivers.get_driver_performance,
+    update_driver_availability: drivers.update_driver_availability,
+    get_driver_dashboard: drivers.get_driver_dashboard,
   },
   orders: {
     list: orders.list,
@@ -76,6 +89,7 @@ const api = {
     delete: orders.destroy,
     register_products: { ...orders.register_products },
   },
+  // LEGACY - DEPRECATED (mantener temporalmente para compatibilidad)
   payments: {
     list: payments.list,
     create: payments.create,
@@ -86,7 +100,51 @@ const api = {
       create: payments.create_bulk,
     },
   },
+
+  // NUEVO SISTEMA UNIFICADO DE PAGOS
+  finance: {
+    payments: { ...finance.payments },
+    payment_methods: { ...finance.payment_methods },
+    // Mantener aliases legacy temporalmente
+    legacy: {
+      payments: { ...finance.legacy_payments },
+      type_payments: { ...finance.legacy_type_payments },
+    },
+  },
   dashboard: dashboardEndpoints,
+  measurements: {
+    // API principal de mediciones
+    list: measurements.list,
+    retrieve: measurements.retrieve,
+    create: measurements.create,
+    update: measurements.update,
+    delete: measurements.destroy,
+    bulkCreate: measurements.bulkCreate,
+    verify: measurements.verify,
+    getPendingVerification: measurements.getPendingVerification,
+    getMyMeasurements: measurements.getMyMeasurements,
+    getDashboard: measurements.getDashboard,
+    getConsumptionTrends: measurements.getConsumptionTrends,
+
+    // Tipos de medición
+    measurementTypes: { ...measurements.measurementTypes },
+
+    // Puntos de medición
+    measurementPoints: { ...measurements.measurementPoints },
+
+    // Inventario - descuento automático
+    inventory: { ...measurements.inventory },
+
+    // Funciones helper
+    helpers: { ...measurements.measurementHelpers },
+
+    // Legacy compatibility - mantener hasta migración completa
+    readings: { ...measurements.readings },
+    equipment: { ...measurements.equipment },
+    service_clients: { ...measurements.service_clients },
+    tax_documents: { ...measurements.tax_documents },
+    technicians: { ...measurements.technicians },
+  },
 };
 
 export default api;

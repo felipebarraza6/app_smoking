@@ -20,8 +20,25 @@ const CreateUpdate = () => {
   useEffect(() => {
     if (state.select_to_edit) {
       form.setFieldsValue(state.select_to_edit);
+      // También actualizar el logo en el estado si existe
+      if (state.select_to_edit.logo) {
+        dispatch({
+          type: "change_logo",
+          payload: state.select_to_edit.logo,
+        });
+      } else {
+        // Si no hay logo, limpiar el estado
+        dispatch({
+          type: "clear_logo",
+        });
+      }
+    } else {
+      // Si no hay sucursal seleccionada (modo crear), limpiar el logo
+      dispatch({
+        type: "clear_logo",
+      });
     }
-  }, [state.select_to_edit, form]);
+  }, [state.select_to_edit, form, dispatch]);
 
   // Verificar si el usuario puede editar la sucursal seleccionada
   const canEditSelectedBranch = () => {
@@ -32,9 +49,14 @@ const CreateUpdate = () => {
     if (!state.select_to_edit) {
       // Verificar si tiene algún rol de gestión en alguna sucursal
       const branches = appState.branches || [];
-      return branches.some((branchAccess) =>
+      const hasManagementRole = branches.some((branchAccess) =>
         ["OWNER", "ADMIN", "MANAGER"].includes(branchAccess.role)
       );
+
+      // Si no tiene sucursales, permitir crear la primera
+      const hasNoBranches = branches.length === 0;
+
+      return hasManagementRole || hasNoBranches;
     }
 
     // Si hay sucursal seleccionada, verificar si puede editar esa específica
@@ -84,7 +106,7 @@ const CreateUpdate = () => {
       <Col>
         <ShopOutlined css={iconStyle} />
       </Col>
-      <Col>Crear Tienda</Col>
+      <Col>Crear Sucursal</Col>
     </Row>
   );
 

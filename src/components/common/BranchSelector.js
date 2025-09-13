@@ -193,8 +193,8 @@ const BranchSelector = ({
                     </Text>
                   </div>
                 )}
-                {/* Mostrar texto especial si eres propietario */}
-                {role === "OWNER" && !isAllOption && (
+                {/* Mostrar texto especial si eres propietario y showRole está habilitado */}
+                {showRole && role === "OWNER" && !isAllOption && (
                   <div>
                     <Text
                       style={{
@@ -260,7 +260,7 @@ const BranchSelector = ({
           }}
         />
         <Text style={{ marginLeft: 4, fontSize: "12px" }}>
-          {branch.business_name.length > 15
+          {branch.business_name?.length > 15
             ? `${branch.business_name.substring(0, 15)}...`
             : branch.business_name}
         </Text>

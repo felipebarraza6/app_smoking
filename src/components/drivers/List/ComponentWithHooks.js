@@ -60,6 +60,8 @@ const List = ({
 
   // Memoizar el dataSource para evitar re-renderizaciones
   const dataSource = useMemo(() => {
+    console.log("🚚 ComponentWithHooks - drivers data:", drivers);
+    console.log("🚚 ComponentWithHooks - drivers.results:", drivers?.results);
     return drivers?.results || [];
   }, [drivers?.results]);
 
