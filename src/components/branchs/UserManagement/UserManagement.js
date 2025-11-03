@@ -105,13 +105,9 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
     if (onUpdate) onUpdate();
   };
 
-  // Verificar si el usuario actual puede gestionar usuarios
-  const canManageUsers = () => {
-    if (currentUserType === "ADM") return true;
-    if (currentUserRole === "OWNER") return true;
-    if (currentUserRole === "ADMIN") return true;
-    if (currentUserRole === "MANAGER") return true;
-    return false;
+  // Verificar si el usuario actual puede ver el botón de asignación (solo Super Admin)
+  const canShowAssignExistingUserButton = () => {
+    return currentUserType === "ADM";
   };
 
   // No renderizar si no hay branch o business_name
@@ -127,13 +123,13 @@ const UserManagement = ({ branch, visible, onClose, onUpdate }) => {
         onClose={onClose}
         width={isMobile ? "100%" : 800}
         extra={
-          canManageUsers() && (
+          canShowAssignExistingUserButton() && (
             <Button
               type="primary"
               onClick={() => setAssignModalVisible(true)}
               style={{ marginRight: 8 }}
             >
-              Asignar Usuario
+              Asignar Usuario Existente
             </Button>
           )
         }

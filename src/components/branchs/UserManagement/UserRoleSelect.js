@@ -3,10 +3,10 @@ import { Select } from "antd";
 
 const ROLE_LABELS = {
   OWNER: "Propietario",
-  ADMIN: "Administrador",
+  ADMIN_LOCAL: "Administrador Local",
   MANAGER: "Gerente",
-  EMPLOYEE: "Empleado",
-  VIEWER: "Solo Lectura",
+  METER: "Medidor",
+  CAJERO: "Cajero/a",
 };
 
 const UserRoleSelect = ({
@@ -24,10 +24,10 @@ const UserRoleSelect = ({
   });
   if (!validRoles.includes(safeValue)) {
     console.warn(
-      `[UserRoleSelect] Valor de rol inválido ('${value}'), usando 'EMPLOYEE' por defecto. Opciones válidas:`,
+      `[UserRoleSelect] Valor de rol inválido ('${value}'), usando 'METER' por defecto. Opciones válidas:`,
       validRoles
     );
-    safeValue = "EMPLOYEE";
+    safeValue = "METER";
   }
 
   return (

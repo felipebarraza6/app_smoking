@@ -19,18 +19,18 @@ const { Text } = Typography;
 
 const ROLE_COLORS = {
   OWNER: "gold",
-  ADMIN: "red",
+  ADMIN_LOCAL: "red",
   MANAGER: "blue",
-  EMPLOYEE: "green",
-  VIEWER: "default",
+  METER: "#1890ff",
+  CAJERO: "#1890ff",
 };
 
 const ROLE_LABELS = {
   OWNER: "Propietario",
-  ADMIN: "Administrador",
+  ADMIN_LOCAL: "Administrador Local",
   MANAGER: "Gerente",
-  EMPLOYEE: "Empleado",
-  VIEWER: "Solo Lectura",
+  METER: "Medidor",
+  CAJERO: "Cajero/a",
 };
 
 const AssignExistingUserModal = ({ visible, onClose, branch, onSuccess }) => {
@@ -116,8 +116,8 @@ const AssignExistingUserModal = ({ visible, onClose, branch, onSuccess }) => {
     <Modal
       title={
         <Space>
-          <TeamOutlined />
-          Asignar Usuario Existente - {branch?.business_name}
+          <TeamOutlined style={{ color: "#1890ff" }} />
+          Asignar Usuario Existente (Super Admin) - {branch?.business_name}
         </Space>
       }
       open={visible}
@@ -132,7 +132,7 @@ const AssignExistingUserModal = ({ visible, onClose, branch, onSuccess }) => {
         </div>
       ) : availableUsers.length === 0 ? (
         <div style={{ textAlign: "center", padding: "40px" }}>
-          <TeamOutlined style={{ fontSize: 48, color: "#ccc" }} />
+          <TeamOutlined style={{ fontSize: 48, color: "#1890ff" }} />
           <div style={{ marginTop: 16, color: "#666" }}>
             No hay usuarios disponibles para asignar
           </div>
@@ -146,7 +146,7 @@ const AssignExistingUserModal = ({ visible, onClose, branch, onSuccess }) => {
           layout="vertical"
           onFinish={handleAssignUser}
           initialValues={{
-            role: "EMPLOYEE",
+            role: "METER",
             is_active: true,
           }}
         >

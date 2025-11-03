@@ -1,15 +1,15 @@
 export const ROLE_COLORS = {
   OWNER: "gold",
-  ADMIN: "red",
+  ADMIN_LOCAL: "red",
   MANAGER: "blue",
-  EMPLOYEE: "green",
-  VIEWER: "default",
+  METER: "#1890ff",
+  CAJERO: "#1890ff",
 };
 
 export const ROLE_LABELS = {
   OWNER: "Propietario",
-  ADMIN: "Administrador",
+  ADMIN_LOCAL: "Administrador Local",
   MANAGER: "Gerente",
-  EMPLOYEE: "Empleado",
-  VIEWER: "Solo Lectura",
+  METER: "Medidor",
+  CAJERO: "Cajero/a",
 };

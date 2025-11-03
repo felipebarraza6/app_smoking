@@ -246,7 +246,10 @@ const CreateUserModal = ({ visible, onCancel, onSuccess }) => {
               <Form.Item
                 name="role"
                 label="Rol"
-                rules={[{ required: true, message: "Selecciona un rol" }]}
+              rules={[{ required: true, message: "Selecciona un rol" }]}
+              extra={
+                "El rol es obligatorio para todos los usuarios. Los SUPERUSER solo los crea el Super Admin."
+              }
               >
                 <Select
                   placeholder="Seleccionar rol"
