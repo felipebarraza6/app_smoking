@@ -1,6 +1,5 @@
-import { list, create, destroy } from "../api/endpoints/products";
+import { list, create, update, destroy } from "../api/endpoints/products";
 import { register_products } from "../api/endpoints/orders";
-import api from "../api/endpoints";
 
 import {
   changePage,
@@ -117,7 +116,6 @@ const deleteProduct = async (product, dispatch, notification) => {
 const getProducts = async (state, dispatch) => {
   try {
     const response = await list(state.list.page, state.filters);
-    console.log("Products API response:", response);
 
     const results = Array.isArray(response?.results)
       ? response.results
@@ -125,33 +123,10 @@ const getProducts = async (state, dispatch) => {
       ? response.data
       : [];
     const count = response?.count || results.length;
-    
-    // Cargar categorías independientemente desde su propio endpoint
-    let categories = [];
-    try {
-      console.log("🏷️ Loading categories...");
-      const categoriesResponse = await api.products.categories.list();
-      console.log("✅ Categories response:", categoriesResponse);
-      const categoriesData = categoriesResponse?.results || categoriesResponse || [];
-      categories = Array.isArray(categoriesData) ? categoriesData : [];
-      console.log("📊 Categories processed:", categories);
-    } catch (categoryError) {
-      console.error("❌ Error loading categories:", categoryError);
-    }
-    
-    // Cargar sucursales independientemente
-    let branchs = [];
-    try {
-      console.log("🏢 Loading branches...");
-      const branchesData = await api.branchs.my_branches_select();
-      console.log("✅ Branches loaded:", branchesData);
-      branchs = Array.isArray(branchesData) ? branchesData : [];
-    } catch (branchError) {
-      console.error("❌ Error loading branches:", branchError);
-    }
-    
-    console.log("Final data - Categories:", categories, "Branches:", branchs);
-    
+    const categories = Array.isArray(response?.categories)
+      ? response.categories
+      : [];
+    const branchs = Array.isArray(response?.branchs) ? response.branchs : [];
     const payload = {
       results,
       count,
@@ -163,7 +138,7 @@ const getProducts = async (state, dispatch) => {
       payload: payload,
     });
   } catch (error) {
-    console.error("Error loading products:", error);
+
     dispatch({
       type: "add",
       payload: {

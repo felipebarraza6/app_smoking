@@ -8,12 +8,9 @@ import { css } from "@emotion/react";
 
 const ListFilterCategories = () => {
   const { state, dispatch } = useContext(ProductsContext);
-  const categoriesList = state.categories?.list || [];
-  const sortedCategories = Array.isArray(categoriesList)
-    ? categoriesList.sort(
-        (a, b) => (b.product_count || 0) - (a.product_count || 0)
-      )
-    : [];
+  const sortedCategories = state.categories.list.sort(
+    (a, b) => b.product_count - a.product_count
+  );
 
   const onChangeCategory = (category) => {
     controller.list_table.change_filters_selects(
@@ -30,7 +27,7 @@ const ListFilterCategories = () => {
   const renderButton = (category) => {
     return (
       <Button
-        disabled={(category.product_count || 0) === 0}
+        disabled={category.product_count === 0}
         key={category.id}
         type={state.filters.category === category.id ? "primary" : "dashed"}
         size="small"

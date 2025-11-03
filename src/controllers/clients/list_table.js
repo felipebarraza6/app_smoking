@@ -42,183 +42,98 @@ export const selectContact = (contact, dispatch) => {
   });
 };
 
-// ✅ MEJORADO: Mejor manejo de errores y logging
 export const createContact = async (
   contact,
   dispatch,
   notification,
   setOpenSecond
 ) => {
-  try {
-    console.log("🚀 Creating contact with data:", contact);
-
-    const response = await contacts.create(contact);
-    console.log("✅ Contact created successfully:", response);
-
-    dispatch({
-      type: "update_list",
+  await contacts
+    .create(contact)
+    .then(() => {
+      dispatch({
+        type: "update_list",
+      });
+      setOpenSecond(false);
+    })
+    .catch((e) => {
+      const errors = e.response.data;
+      const errorList = Object.keys(errors).map((key) => errors[key]);
+      notification.error({
+        message: "Error al crear el contacto.",
+        description: (
+          <ul>
+            {errorList.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        ),
+      });
     });
-
-    notification.success({
-      message: "Contacto creado exitosamente",
-      placement: "bottomRight",
-    });
-
-    setOpenSecond(false);
-  } catch (e) {
-    console.error("❌ Error creating contact:", e);
-
-    const errors = e.response?.data || {};
-    console.error("❌ Server errors:", errors);
-
-    // ✅ MEJORADO: Mapeo de errores más específico
-    const errorMapping = {
-      first_name: "nombre",
-      last_name: "apellido",
-      dni: "RUT/DNI",
-      email: "email",
-      phone: "teléfono",
-      job_title: "cargo",
-      department: "departamento",
-      contact_type: "tipo de contacto",
-      client: "cliente",
-      branch: "sucursal",
-      non_field_errors: "errores generales",
-    };
-
-    const errorList = Object.keys(errors)
-      .map((key) => {
-        const fieldName = errorMapping[key] || key;
-        const errorMessages = Array.isArray(errors[key])
-          ? errors[key]
-          : [errors[key]];
-
-        return errorMessages.map((msg) => `${fieldName}: ${msg}`);
-      })
-      .flat();
-
-    notification.error({
-      message: "Error al crear el contacto",
-      description: (
-        <ul>
-          {errorList.map((error, index) => (
-            <li key={index}>{error}</li>
-          ))}
-        </ul>
-      ),
-    });
-  }
 };
 
-// ✅ MEJORADO: Mejor manejo de errores
 export const updateContact = async (
   contact,
   dispatch,
   notification,
   setOpenSecond
 ) => {
-  try {
-    console.log("🔄 Updating contact with data:", contact);
-
-    const response = await contacts.update(contact.id, contact);
-    console.log("✅ Contact updated successfully:", response);
-
-    dispatch({
-      type: "update_list",
+  await contacts
+    .update(contact.id, contact)
+    .then(() => {
+      dispatch({
+        type: "update_list",
+      });
+      dispatch({
+        type: "select_contact",
+        payload: { contact: null },
+      });
+      setOpenSecond(false);
+    })
+    .catch((e) => {
+      const errors = e.response.data;
+      const errorList = Object.keys(errors).map((key) => errors[key]);
+      notification.error({
+        message: "Error al actualizar el contacto.",
+        description: (
+          <ul>
+            {errorList.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        ),
+      });
     });
-
-    dispatch({
-      type: "select_contact",
-      payload: { contact: null },
-    });
-
-    notification.success({
-      message: "Contacto actualizado exitosamente",
-      placement: "bottomRight",
-    });
-
-    setOpenSecond(false);
-  } catch (e) {
-    console.error("❌ Error updating contact:", e);
-
-    const errors = e.response?.data || {};
-
-    // ✅ Usar el mismo mapeo de errores
-    const errorMapping = {
-      first_name: "nombre",
-      last_name: "apellido",
-      dni: "RUT/DNI",
-      email: "email",
-      phone: "teléfono",
-      job_title: "cargo",
-      department: "departamento",
-      contact_type: "tipo de contacto",
-      client: "cliente",
-      branch: "sucursal",
-      non_field_errors: "errores generales",
-    };
-
-    const errorList = Object.keys(errors)
-      .map((key) => {
-        const fieldName = errorMapping[key] || key;
-        const errorMessages = Array.isArray(errors[key])
-          ? errors[key]
-          : [errors[key]];
-
-        return errorMessages.map((msg) => `${fieldName}: ${msg}`);
-      })
-      .flat();
-
-    notification.error({
-      message: "Error al actualizar el contacto",
-      description: (
-        <ul>
-          {errorList.map((error, index) => (
-            <li key={index}>{error}</li>
-          ))}
-        </ul>
-      ),
-    });
-  }
 };
 
 export const deleteContact = async (contact, dispatch, notification) => {
-  try {
-    console.log("🗑️ Deleting contact:", contact.id);
-
-    await contacts.destroy(contact.id);
-    console.log("✅ Contact deleted successfully");
-
-    dispatch({
-      type: "update_list",
+  await contacts
+    .destroy(contact.id)
+    .then(() => {
+      dispatch({
+        type: "update_list",
+      });
+      dispatch({
+        type: "change_page",
+        page: 1,
+      });
+      notification.success({
+        message: "Contacto eliminado correctamente.",
+        placement: "bottomRight",
+      });
+    })
+    .catch((e) => {
+      const errors = e.response.data;
+      const errorList = Object.keys(errors).map((key) => errors[key]);
+      notification.error({
+        message: "Error al eliminar el contacto.",
+        description: (
+          <ul>
+            {errorList.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        ),
+      });
     });
-
-    dispatch({
-      type: "change_page",
-      page: 1,
-    });
-
-    notification.success({
-      message: "Contacto eliminado correctamente",
-      placement: "bottomRight",
-    });
-  } catch (e) {
-    console.error("❌ Error deleting contact:", e);
-
-    const errors = e.response?.data || {};
-    const errorList = Object.keys(errors)
-      .map((key) => errors[key])
-      .flat();
-
-    notification.error({
-      message: "Error al eliminar el contacto",
-      description: (
-        <ul>
-          {errorList.map((error, index) => (
-            <li key={index}>{error}</li>
-          ))}
-        </ul>
-      ),
-    });
-  }
 };

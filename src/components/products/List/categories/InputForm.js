@@ -16,9 +16,7 @@ const InputForm = () => {
 
   const onFinish = async (values) => {
     if (values.name.length > 0) {
-      console.log("Creating category with values:", values);
-      const result = await controller.category.create(values, dispatch, form);
-      console.log("Category creation result:", result);
+      controller.category.create(values, dispatch, form);
     }
   };
 

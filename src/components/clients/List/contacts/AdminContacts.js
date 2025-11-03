@@ -7,7 +7,7 @@ import { ClientsContext } from "../../../../containers/Clients";
 import { controller } from "../../../../controllers/clients";
 
 const AdminContacts = ({ client }) => {
-  const contacts = client?.contacts || [];
+  const contacts = client.contacts;
   const { state, dispatch } = useContext(ClientsContext);
   const [open, setOpen] = useState(false);
   const [openSecond, setOpenSecond] = useState(false);
@@ -26,7 +26,7 @@ const AdminContacts = ({ client }) => {
     const element = (
       <Flex gap={"small"}>
         <ContactsFilled />
-        {client?.name?.toUpperCase() || "Cliente"}
+        {client.name.toUpperCase()}
       </Flex>
     );
     return element;
@@ -64,8 +64,7 @@ const AdminContacts = ({ client }) => {
                 <Flex gap={"small"}>
                   <UserOutlined />
                   {state.contacts.select_to_edit
-                    ? state.contacts.select_to_edit.name?.toUpperCase() ||
-                      "Contacto"
+                    ? state.contacts.select_to_edit.name.toUpperCase()
                     : "Nuevo contacto"}
                 </Flex>
               }

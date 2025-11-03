@@ -93,13 +93,13 @@ export const defaultColumn = (
                 cancelButtonProps={{ type: "primary" }}
               >
                 <Button
-                  size="small"
                   type="primary"
                   block
                   icon={<DeleteFilled />}
+                  size="small"
                 >
                   Eliminar
-                </Button>
+                </Button>{" "}
               </Popconfirm>
             )}
           </Flex>
@@ -160,7 +160,7 @@ export const shortColumn = (
             {(canManage || isSystemAdmin) && (
               <Col>
                 <Popconfirm
-                  title={"Estas seguro de eliminar la sucursal?"}
+                  title={"Estas seguro de eliminar la tienda?"}
                   onConfirm={() => controller.delete(x, dispatch, notification)}
                   cancelButtonProps={{ type: "primary" }}
                 >
@@ -183,7 +183,7 @@ export const shortColumn = (
 export const expandableRow = (record) => {
   return (
     <>
-      <Descriptions title="Sucursal" bordered size="small" layout="vertical">
+      <Descriptions title="Tienda" bordered size="small" layout="vertical">
         <Descriptions.Item label="Nombre">
           {record.business_name.toUpperCase()}
         </Descriptions.Item>

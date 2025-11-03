@@ -35,69 +35,34 @@ const FormPay = () => {
   };
 
   const addPaymentForm = (values) => {
-    // Estructura para sistema unificado
-    const paymentData = {
-      // Campos para sistema unificado
-      payment_method_id: values.type_payment, // ID del PaymentMethod
-      order_id: state.order?.create_id,
-      amount: values.amount.toString(), // Convertir a string para decimal
-      reference: values.reference || "",
-      notes: values.notes || "",
-      branch_id: state.branchs.selected?.id,
-      
-      // Campos legacy para compatibilidad temporal
+    values = {
       type: (state.payments?.list || []).length + 1,
-      type_payment: values.type_payment, // Para compatibilidad legacy
+      ...values,
       order: state.order?.create_id,
       date: new Date().toISOString(),
-      ...values
     };
-    
     dispatch({
       type: "add_payment",
-      payload: paymentData,
+      payload: values,
     });
     form.resetFields();
   };
 
   const fetchTypePayments = async () => {
-    try {
-      // Usar sistema unificado de payment methods
-      const response = await api.finance.payment_methods.list_active({
-        branch: state.branchs.selected?.id
-      });
-      
-      dispatch({
-        type: "add_type_payments",
-        payload: response.results || response || [],
-      });
-      
-      return response.results || response || [];
-    } catch (error) {
-      console.error("Error fetching payment methods:", error);
-      
-      // Fallback a sistema legacy si falla
-      try {
-        const legacyResponse = await api.finance.legacy_type_payments.list({
-          branch: state.branchs.selected?.id
-        });
-        
+    const response = await api.payments.type_payments
+      .list()
+      .then((response) => {
         dispatch({
-          type: "add_type_payments", 
-          payload: legacyResponse.results || [],
+          type: "add_type_payments",
+          payload: response.results || [],
         });
-        
-        return legacyResponse.results || [];
-      } catch (legacyError) {
-        console.error("Error fetching legacy payment methods:", legacyError);
-        return [];
-      }
-    }
+        return response.results || [];
+      });
   };
 
   useEffect(() => {
     fetchTypePayments();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Form

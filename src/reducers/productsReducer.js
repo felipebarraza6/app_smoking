@@ -76,16 +76,6 @@ export const productsReducer = (state, action) => {
         },
       };
 
-    case "set_categories":
-      return {
-        ...state,
-        categories: {
-          ...state.categories,
-          list: action.payload.categories || [],
-          count: (action.payload.categories || []).length,
-        },
-      };
-
     default:
       return state;
   }

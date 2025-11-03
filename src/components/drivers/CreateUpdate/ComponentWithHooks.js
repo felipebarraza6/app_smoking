@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React, { useEffect, useCallback, useMemo } from "react";
-import { Card, Form, Row, Col, Space } from "antd";
+import { Card, Form, Row, Col } from "antd";
 import { css } from "@emotion/react";
 import { TruckOutlined, TruckFilled } from "@ant-design/icons";
 import FieldsForm from "./FieldsFormWithHooks";
@@ -45,17 +45,7 @@ const CreateUpdate = ({
           <Col>
             <TruckFilled css={iconStyle} />
           </Col>
-          <Col>
-            <Space direction="vertical" size="small">
-              <div>
-                {selectedDriver.user?.first_name}{" "}
-                {selectedDriver.user?.last_name}
-              </div>
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                Perfil de Conductor
-              </div>
-            </Space>
-          </Col>
+          <Col>{selectedDriver.name}</Col>
         </Row>
       );
     } else {
@@ -64,14 +54,7 @@ const CreateUpdate = ({
           <Col>
             <TruckOutlined css={iconStyle} />
           </Col>
-          <Col>
-            <Space direction="vertical" size="small">
-              <div>Crear Perfil de Conductor</div>
-              <div style={{ fontSize: "12px", color: "#666" }}>
-                Para usuarios con rol DRIVER
-              </div>
-            </Space>
-          </Col>
+          <Col>Crear repartidor</Col>
         </Row>
       );
     }
@@ -87,7 +70,9 @@ const CreateUpdate = ({
           branch: selectedDriver.branch?.id || selectedDriver.branch,
         };
         form.setFieldsValue(driverData);
-      } catch (error) {}
+      } catch (error) {
+
+      }
     } else {
       // Limpiar formulario cuando no hay driver seleccionado
       form.resetFields();

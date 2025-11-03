@@ -62,6 +62,7 @@ const MyBranchesSection = () => {
   const loadBranches = async () => {
     setLoading(true);
     try {
+
       const response = await api.branchs.my_branches();
       console.log("API Response my_branches:", response); // Debug log
 
@@ -73,9 +74,12 @@ const MyBranchesSection = () => {
       setBranches(branchesData);
 
       if (branchesData.length === 0) {
+
       } else {
+
       }
     } catch (error) {
+
       message.error("Error al cargar las sucursales");
       setBranches([]); // Asegurar que sea un array vacío
     } finally {
@@ -93,6 +97,7 @@ const MyBranchesSection = () => {
       message.success("Has abandonado la sucursal exitosamente");
       loadBranches(); // Recargar lista
     } catch (error) {
+
       const errorMessage =
         error.response?.data?.error || "Error al abandonar la sucursal";
       message.error(errorMessage);
@@ -108,6 +113,7 @@ const MyBranchesSection = () => {
       setSelectedBranch(null);
       loadBranches(); // Recargar lista
     } catch (error) {
+
       const errorMessage =
         error.response?.data?.error || "Error al transferir la propiedad";
       message.error(errorMessage);
@@ -129,6 +135,7 @@ const MyBranchesSection = () => {
       );
       setAvailableUsers(users);
     } catch (error) {
+
       message.error("Error al cargar usuarios de la sucursal");
     }
   };
@@ -154,7 +161,7 @@ const MyBranchesSection = () => {
         title={
           <Space>
             <BranchesOutlined />
-            Roles en Sucursal
+            Roles en Tienda
           </Space>
         }
         style={{ marginBottom: 16 }}
@@ -172,7 +179,7 @@ const MyBranchesSection = () => {
         title={
           <Space>
             <BranchesOutlined />
-            Roles en Sucursales ({branches.length})
+            Roles en Tiendas ({branches.length})
           </Space>
         }
         style={{ marginBottom: 16 }}
@@ -181,7 +188,41 @@ const MyBranchesSection = () => {
           loading={loading}
           dataSource={branches}
           renderItem={(branchAccess) => (
-            <List.Item>
+            <List.Item
+              actions={
+                isMobile
+                  ? []
+                  : [
+                      // Solo mostrar transferir propiedad si es propietario
+                      branchAccess.role === "OWNER" && (
+                        <Tooltip title="Transferir propiedad">
+                          <Button
+                            icon={<SwapOutlined />}
+                            size="small"
+                            onClick={() => openTransferModal(branchAccess)}
+                          >
+                            Transferir
+                          </Button>
+                        </Tooltip>
+                      ),
+                      // Solo mostrar abandonar si no es propietario
+                      branchAccess.role !== "OWNER" && (
+                        <Popconfirm
+                          title="¿Estás seguro de abandonar esta sucursal?"
+                          onConfirm={() =>
+                            handleLeaveBranch(branchAccess.branch.id)
+                          }
+                          okText="Sí"
+                          cancelText="No"
+                        >
+                          <Button danger icon={<LogoutOutlined />} size="small">
+                            Abandonar
+                          </Button>
+                        </Popconfirm>
+                      ),
+                    ].filter(Boolean)
+              }
+            >
               <List.Item.Meta
                 avatar={
                   <Avatar
@@ -292,7 +333,7 @@ const MyBranchesSection = () => {
         {selectedBranch && (
           <div>
             <p>
-              <strong>Sucursal:</strong> {selectedBranch.branch.business_name}
+              <strong>Tienda:</strong> {selectedBranch.branch.business_name}
             </p>
             <p>
               <strong>Selecciona el nuevo propietario:</strong>

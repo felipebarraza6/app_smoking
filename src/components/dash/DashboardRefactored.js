@@ -1,12 +1,13 @@
-import React, { useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Typography,
   Flex,
   DatePicker,
   Space,
+  Alert,
   Spin,
-  Skeleton,
+  theme,
 } from "antd";
 import { useBreakpoint } from "../../utils/breakpoints";
 
@@ -24,50 +25,33 @@ import InventorySection from "./InventorySection";
 import BranchSelector from "../common/BranchSelector";
 import TimeSeriesChart from "./sections/TimeSeriesChart";
 import BranchPerformanceChart from "./sections/BranchPerformanceChart";
-import DashboardSkeleton from "./DashboardSkeleton";
 
-// Utilidades (comentado por no uso actual)
-// import { formatPeriod } from "./utils/dashboardHelpers";
+// Utilidades
+import { formatPeriod } from "./utils/dashboardHelpers";
 
 const { Title, Text } = Typography;
 const { RangePicker } = DatePicker;
 
 const DashboardRefactored = () => {
+  const { token } = theme.useToken();
   const breakpoint = useBreakpoint();
   const isMobile = breakpoint === "xs" || breakpoint === "sm";
 
-  // Estado local (comentado por no uso actual)
-  // const [showInfoAlert, setShowInfoAlert] = useState(true);
+  // Estado local
+  const [showInfoAlert, setShowInfoAlert] = useState(true);
 
   // Hooks personalizados
-  const {
-    filters,
-    setFilters,
-    branches,
-    loading: branchesLoading,
-  } = useDashboardFilters();
+  const { filters, setFilters, branches } = useDashboardFilters();
 
-  // Validación de filtros: memorizada para evitar re-cálculos
-  const filtrosListos = useMemo(() => {
-    if (!filters) return false;
-    
-    // Verificar sucursales: debe haber al menos una y debe ser un array válido
-    const hasBranches = filters.branch_ids && 
-                       Array.isArray(filters.branch_ids) && 
-                       filters.branch_ids.length > 0 &&
-                       filters.branch_ids.every(id => id !== null && id !== undefined);
-    
-    // Verificar fechas: debe ser un array de 2 elementos válidos
-    const hasDates = filters.dates && 
-                    Array.isArray(filters.dates) && 
-                    filters.dates.length === 2 &&
-                    filters.dates[0] && 
-                    filters.dates[1] &&
-                    filters.dates[0].isValid && filters.dates[0].isValid() &&
-                    filters.dates[1].isValid && filters.dates[1].isValid();
-    
-    return hasBranches && hasDates;
-  }, [filters]);
+  // Validación de filtros: si no hay sucursales o fechas, no se debe intentar cargar el dashboard
+  const filtrosListos =
+    filters &&
+    Array.isArray(filters.branch_ids) &&
+    filters.branch_ids.length > 0 &&
+    filters.dates &&
+    filters.dates.length === 2 &&
+    filters.dates[0] &&
+    filters.dates[1];
 
   // Hook de datos del dashboard
   const {
@@ -75,43 +59,28 @@ const DashboardRefactored = () => {
     totalSummary,
     inventoryData,
     loading,
-    initialLoad,
-    // fetchSummary, // Comentado por no uso actual
-    // fetchInventoryData, // Comentado por no uso actual
+    fetchSummary,
+    fetchInventoryData,
   } = useDashboardData(filters);
 
-  // Debug logging (remove in production)
-  if (process.env.NODE_ENV === "development") {
-    console.log("🔍 DashboardRefactored render:", {
-      filtrosListos,
-      loading,
-      initialLoad,
-      hasData: !!totalSummary,
-      filtersChanged: filters?.branch_ids?.length,
-    });
-  }
-
   const {
-    // modalVisible, // Comentado por no uso actual
-    // modalType, // Comentado por no uso actual
-    // modalData, // Comentado por no uso actual
-    // modalLoading, // Comentado por no uso actual
+    modalVisible,
+    modalType,
+    modalData,
+    modalLoading,
     handleCardClick,
-    // handleModalClose, // Comentado por no uso actual
+    handleModalClose,
   } = useDashboardModals();
 
   // Generar título dinámico
   const getTitle = () => {
-    // Restar 1 porque el primer elemento siempre es "Todas mis sucursales"
-    const totalBranches = (branches?.length || 1) - 1;
-
     const branchText =
       !filters?.branch_ids || filters.branch_ids.length === 0
-        ? `${totalBranches} sucursal${totalBranches !== 1 ? "es" : ""}`
+        ? "Todas las sucursales"
         : filters.branch_ids.length === 1
         ? branches.find((b) => b.id === filters.branch_ids[0])?.business_name ||
           "Sucursal"
-        : `${totalBranches} sucursal${totalBranches !== 1 ? "es" : ""}`;
+        : `${filters.branch_ids.length} sucursales`;
 
     return `Resumen • ${branchText}`;
   };
@@ -126,23 +95,14 @@ const DashboardRefactored = () => {
   };
 
   const handleBranchChange = (newBranches) => {
-    // Si newBranches es null o está vacío, usar todas las sucursales (excluyendo la opción "all")
-    let branchIds;
-    if (!newBranches || (Array.isArray(newBranches) && newBranches.length === 0)) {
-      branchIds = branches.filter(b => !b.is_all_option).map((b) => b.id);
-    } else if (Array.isArray(newBranches)) {
-      branchIds = newBranches;
-    } else {
-      branchIds = [newBranches];
-    }
-    setFilters((prev) => ({ ...prev, branch_ids: branchIds }));
+    setFilters((prev) => ({ ...prev, branch_ids: newBranches }));
   };
 
   const handleDateRangeChange = (dates) => {
     setFilters((prev) => ({ ...prev, dates: dates }));
   };
 
-  // Mostrar loading si está cargando datos del dashboard
+  // Mostrar loading si está cargando
   if (loading) {
     return (
       <div
@@ -158,20 +118,26 @@ const DashboardRefactored = () => {
     );
   }
 
-  // Mostrar skeleton durante la carga inicial de sucursales y filtros
-  if (branchesLoading || !filtrosListos) {
-    return <DashboardSkeleton isMobile={isMobile} />;
+  // Mostrar advertencia si no hay sucursales o fechas seleccionadas
+  if (!filtrosListos) {
+    return (
+      <div style={{ padding: isMobile ? 16 : 24 }}>
+        <Card>
+          <Typography.Title level={4} style={{ color: "#faad14" }}>
+            Filtros incompletos
+          </Typography.Title>
+          <Typography.Text>
+            Debes seleccionar al menos una sucursal y un rango de fechas para
+            ver el dashboard.
+          </Typography.Text>
+        </Card>
+      </div>
+    );
   }
 
   // Render principal del dashboard
   return (
-    <div
-      style={{
-        padding: isMobile ? 16 : 24,
-        opacity: 1,
-        transition: "opacity 0.4s ease-in-out",
-      }}
-    >
+    <div style={{ padding: isMobile ? 16 : 24 }}>
       {/* Estructura principal del dashboard */}
       <Flex vertical gap="large">
         {/* Header con filtros */}
@@ -211,135 +177,38 @@ const DashboardRefactored = () => {
         </Card>
 
         {/* Gráfico de series de tiempo */}
-        <Card
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Skeleton active paragraph={{ rows: 6 }} />
-          ) : (
-            <div style={{ minHeight: "200px" }}>
-              <TimeSeriesChart
-                data={totalSummary?.time_series || []}
-                loading={loading}
-              />
-            </div>
-          )}
-        </Card>
+        <TimeSeriesChart data={totalSummary?.time_series} loading={loading} />
 
         {/* Gráfico de Rendimiento por Sucursal */}
-        <Card
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Skeleton active paragraph={{ rows: 4 }} />
-          ) : (
-            <div style={{ minHeight: "150px" }}>
-              <BranchPerformanceChart data={summary} loading={loading} />
-            </div>
-          )}
-        </Card>
+        <BranchPerformanceChart data={summary} loading={loading} />
 
         {/* Sección de Ventas */}
-        <div
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Card>
-              <Skeleton active paragraph={{ rows: 3 }} />
-            </Card>
-          ) : (
-            <SalesSection
-              totalSummary={totalSummary}
-              onCardClick={handleCardClick}
-              isMobile={isMobile}
-            />
-          )}
-        </div>
+        <SalesSection
+          totalSummary={totalSummary}
+          onCardClick={handleCardClick}
+          isMobile={isMobile}
+        />
 
         {/* Sección de Pedidos */}
-        <div
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Card>
-              <Skeleton active paragraph={{ rows: 3 }} />
-            </Card>
-          ) : (
-            <OrdersSection
-              totalSummary={totalSummary}
-              onCardClick={handleCardClick}
-              isMobile={isMobile}
-            />
-          )}
-        </div>
+        <OrdersSection
+          totalSummary={totalSummary}
+          onCardClick={handleCardClick}
+          isMobile={isMobile}
+        />
 
         {/* Sección de Pagos */}
-        <div
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Card>
-              <Skeleton active paragraph={{ rows: 3 }} />
-            </Card>
-          ) : (
-            <PaymentsSection
-              title="Pagos"
-              payments={totalSummary?.payments || []}
-              isMobile={isMobile}
-              onCardClick={handleCardClick}
-            />
-          )}
-        </div>
+        <PaymentsSection
+          title="Pagos"
+          payments={totalSummary.payments}
+          isMobile={isMobile}
+          onCardClick={handleCardClick}
+        />
 
         {/* Sección de Rendimiento de Productos */}
-        <div
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Card>
-              <Skeleton active paragraph={{ rows: 4 }} />
-            </Card>
-          ) : (
-            <ProductPerformanceSection data={totalSummary} />
-          )}
-        </div>
+        <ProductPerformanceSection data={totalSummary} />
 
         {/* Sección de Inventario */}
-        <div
-          style={{
-            transition: "opacity 0.3s ease-in-out",
-            opacity: loading && !initialLoad ? 0.7 : 1,
-          }}
-        >
-          {initialLoad ? (
-            <Card>
-              <Skeleton active paragraph={{ rows: 5 }} />
-            </Card>
-          ) : (
-            <InventorySection
-              inventoryData={inventoryData}
-              isMobile={isMobile}
-            />
-          )}
-        </div>
+        <InventorySection inventoryData={inventoryData} isMobile={isMobile} />
       </Flex>
     </div>
   );

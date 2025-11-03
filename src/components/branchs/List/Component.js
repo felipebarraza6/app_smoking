@@ -67,14 +67,6 @@ const List = ({ onManageUsers, canManageBranch, userRoles }) => {
     userRoles,
   ]);
 
-  // Efecto para recargar cuando se actualice countUpdate
-  useEffect(() => {
-    if (state.list?.countUpdate > 0) {
-      // Notificar al contexto padre que recargue las tiendas
-      window.dispatchEvent(new CustomEvent('reloadBranches'));
-    }
-  }, [state.list?.countUpdate]);
-
   return (
     <Table
       dataSource={dataSource}

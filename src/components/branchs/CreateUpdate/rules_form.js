@@ -3,11 +3,11 @@ export const rules = (state) => {
     business_name: [
       {
         required: true,
-        message: "Ingresa el nombre de la sucursal",
+        message: "Ingresa el nombre de la tienda",
       },
       {
         max: 300,
-        message: "El nombre de la sucursal debe tener menos de 300 caracteres",
+        message: "El nombre de la tienda debe tener menos de 300 caracteres",
       },
     ],
     commercial_business: [

@@ -14,7 +14,7 @@ import api from "../../../api/endpoints";
 
 const OrderCreateMobile = () => {
   const { state, dispatch } = useContext(OrdersContext);
-  const branchs = state.branchs?.list || [];
+  const branchs = state.branchs.list;
   const selected_branch = state.branchs.selected;
 
   // Renderizado móvil para cada paso
@@ -103,17 +103,13 @@ const OrderCreateMobile = () => {
         title={titleCard}
         size="small"
         activeTabKey={selected_branch?.id}
-        tabList={
-          Array.isArray(branchs)
-            ? branchs.map((branch) => ({
-                key: branch.id,
-                label:
-                  branch.business_name.length > 10
-                    ? `${branch.business_name.slice(0, 10).toUpperCase()}...`
-                    : branch.business_name.toUpperCase(),
-              }))
-            : []
-        }
+        tabList={branchs.map((branch) => ({
+          key: branch.id,
+          label:
+            branch.business_name.length > 10
+              ? `${branch.business_name.slice(0, 10).toUpperCase()}...`
+              : branch.business_name.toUpperCase(),
+        }))}
         style={{ minHeight: "70vh", padding: 0, width: "100%" }}
         tabProps={tabProps}
         onTabChange={onChangeTab}

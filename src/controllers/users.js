@@ -24,30 +24,21 @@ const createUser = async (values, dispatch, form, notification) => {
       return;
     }
 
-    // Separar datos del usuario y asignación de sucursal según la estructura esperada por el backend
-    const { branch_id, role, ...userData } = values;
-    
+    // Preparar datos para el endpoint signup
     const signupData = {
-      user_data: {
-        ...userData,
-        type_user: "CL", // Forzado por seguridad
-        password_confirmation:
-          values.password_confirmation || values.password_validation, // Manejar ambos casos
-        is_active: values.is_active !== undefined ? values.is_active : true,
-        username:
-          values.username ||
-          values.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, ""), // Generar username desde email
-      },
-      branch_assignment: {
-        branch_id: branch_id,
-        role: role || "VIEWER", // Valor por defecto si no viene
-      }
+      ...values,
+      type_user: values.type_user || "CL", // Valor por defecto del modelo User
+      password_confirmation:
+        values.password_confirmation || values.password_validation, // Manejar ambos casos
+      role: values.role || "VIEWER", // Valor por defecto si no viene
+      is_active: values.is_active !== undefined ? values.is_active : true,
+      username:
+        values.username ||
+        values.email.split("@")[0].replace(/[^a-zA-Z0-9]/g, ""), // Generar username desde email
     };
 
     // Limpiar campos que no deben ir al backend
-    if (signupData.user_data.password_validation) {
-      delete signupData.user_data.password_validation;
-    }
+    delete signupData.password_validation;
 
     // Crear el usuario usando el endpoint signup que crea la asignación automáticamente
     const userResponse = await signup(signupData);
@@ -127,7 +118,7 @@ const updateUser = async (values, state, dispatch, form, notification) => {
   if (values.password) {
     if (values.password === values.password_validation) {
       await change_password({
-        user: state.select_to_edit.username,
+        user: state.select_to_edit.email,
         new_password: values.password,
       })
         .then(() => {
@@ -156,7 +147,7 @@ const updateUser = async (values, state, dispatch, form, notification) => {
       });
     }
   }
-  await update(state.select_to_edit.username, values)
+  await update(state.select_to_edit, values)
     .then(() => {
       dispatch({
         type: "update_list",
@@ -185,8 +176,7 @@ const updateUser = async (values, state, dispatch, form, notification) => {
 
 const getUsers = async (state, dispatch) => {
   try {
-    const branchIds = state.list?.branch_ids || [];
-    const response = await list(state.list.page, branchIds);
+    const response = await list(state.list.page);
     // Verificar que la respuesta tenga la estructura esperada
     const payload = {
       results: response?.results || response?.data || [],

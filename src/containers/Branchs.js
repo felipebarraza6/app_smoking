@@ -81,10 +81,7 @@ const Branchs = () => {
       ["OWNER", "ADMIN", "MANAGER"].includes(role)
     );
 
-    // Si el usuario no tiene sucursales asignadas, permitir crear la primera
-    const hasNoBranches = Object.keys(userRoles).length === 0;
-
-    return hasManagementRole || hasNoBranches;
+    return hasManagementRole;
   }, [isSystemAdmin, userRoles]);
 
   const handleManageUsers = (branch) => {
@@ -138,17 +135,6 @@ const Branchs = () => {
   useEffect(() => {
     // Cargar solo las tiendas asignadas al usuario
     loadMyBranches();
-    
-    // Escuchar evento personalizado para recargar tiendas
-    const handleReloadBranches = () => {
-      loadMyBranches();
-    };
-    
-    window.addEventListener('reloadBranches', handleReloadBranches);
-    
-    return () => {
-      window.removeEventListener('reloadBranches', handleReloadBranches);
-    };
   }, [appDispatch, dispatch]);
 
   // Actualizar la función canManageBranch cuando cambien los roles

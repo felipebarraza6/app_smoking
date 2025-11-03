@@ -40,7 +40,7 @@ const BreadcrumbHomeRender = () => {
         routeRenderText = "usuarios";
         break;
       case "/app/products":
-        routeRenderText = "productos";
+        routeRenderText = "productos e inventario";
         break;
       case "/app/clients":
         routeRenderText = "clientes y contactos";
@@ -62,9 +62,6 @@ const BreadcrumbHomeRender = () => {
         break;
       case "/app/sales-management":
         routeRenderText = "gestión de ventas";
-        break;
-      case "/app/measurements":
-        routeRenderText = "mediciones";
         break;
       default:
         routeRenderText = "sin resultados";

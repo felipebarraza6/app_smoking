@@ -1,7 +1,6 @@
 import axios from "axios";
 
 //const BASE_URL_DEV = "http://137.184.152.245:8003/api/";
-// Configuración para conectar al Django ERP de mediciones
 export const DEVURL = "http://localhost:8000/api/";
 //const BASE_URL_API = "https://8000-idx-apiuisalesmanangement-1744646070221.cluster-qhrn7lb3szcfcud6uanedbkjnm.cloudworkstations.dev/api/";
 
@@ -115,11 +114,11 @@ export const POST_FORM = async (endpoints, data) => {
     const options = {
       headers: {
         Authorization: `Token ${token}`,
-        // No incluir content-type para que el navegador lo establezca automáticamente
+        "content-type": "multipart/form-data",
       },
     };
 
-    const request = await Axios.post(endpoints, formdata, options);
+    const request = await Axios.post(endpoints, data, options);
     return request;
   } catch (error) {
     throw error;
@@ -152,11 +151,11 @@ export const PATCH_FORM = async (endpoints, data) => {
     const options = {
       headers: {
         Authorization: `Token ${token}`,
-        // No incluir content-type para que el navegador lo establezca automáticamente
+        "content-type": "multipart/form-data",
       },
     };
 
-    const request = await Axios.patch(endpoints, formdata, options);
+    const request = await Axios.patch(endpoints, data, options);
     return request;
   } catch (error) {
     throw error;

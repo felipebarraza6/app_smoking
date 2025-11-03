@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Popconfirm } from "antd";
+import { Button, Popconfirm, Tooltip } from "antd";
 import { CheckCircleOutlined, StopOutlined } from "@ant-design/icons";
 
 const UserToggleStatusButton = ({
@@ -45,14 +45,16 @@ const UserToggleStatusButton = ({
       cancelText="No"
       disabled={disabled}
     >
-      <Button
-        type={isActive ? "default" : "primary"}
-        icon={isActive ? <StopOutlined /> : <CheckCircleOutlined />}
-        size="small"
-        block
-        disabled={disabled}
-        children={statusText}
-      />
+      <Tooltip title={statusText}>
+        <Button
+          type={isActive ? "default" : "primary"}
+          icon={isActive ? <StopOutlined /> : <CheckCircleOutlined />}
+          size="small"
+          block
+          disabled={disabled}
+          children={statusText}
+        />
+      </Tooltip>
     </Popconfirm>
   );
 };

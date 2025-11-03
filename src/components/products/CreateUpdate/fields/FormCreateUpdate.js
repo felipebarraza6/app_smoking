@@ -7,7 +7,6 @@ import {
   ShopFilled,
   OrderedListOutlined,
   ContainerOutlined,
-  TagsOutlined,
 } from "@ant-design/icons";
 import IsStock from "../IsStock";
 import { ProductsContext } from "../../../../containers/Products";
@@ -19,36 +18,17 @@ const FormCreateUpdate = ({ isStock, setIsStock, form }) => {
   const filterOption = (input, option) =>
     option.label.toLowerCase().includes(input.toLowerCase());
 
-  const branchsList = state.branchs?.list || [];
-  console.log("🏢 Branches in form:", branchsList);
-  
-  const optionsBranchs = Array.isArray(branchsList)
-    ? branchsList
-        .filter((branch) => branch.value !== "all") // Excluir la opción "Todas"
-        .map((branch) => ({
-          key: branch.value,
-          label: branch.label,
-          value: branch.value,
-        }))
-    : [];
+  const optionsBranchs = state.branchs.list.map((branch) => ({
+    key: branch.id,
+    label: branch.business_name,
+    value: branch.id,
+  }));
 
-  const categoriesList = state.categories?.list || [];
-  const optionsCategories = Array.isArray(categoriesList)
-    ? categoriesList.map((category) => ({
-        key: category.id,
-        label: category.name,
-        value: category.id,
-      }))
-    : [];
-
-  // Opciones de tipo de producto
-  const productTypeOptions = [
-    { key: "SALE", label: "Producto de Venta", value: "SALE" },
-    { key: "TOOL", label: "Herramienta/Equipo", value: "TOOL" },
-    { key: "RAW_MATERIAL", label: "Materia Prima", value: "RAW_MATERIAL" },
-    { key: "FINISHED_GOOD", label: "Producto Terminado", value: "FINISHED_GOOD" },
-    { key: "MIXED", label: "Uso Mixto", value: "MIXED" },
-  ];
+  const optionsCategories = state.categories.list.map((category) => ({
+    key: category.id,
+    label: category.name,
+    value: category.id,
+  }));
 
   return (
     <>
@@ -77,16 +57,6 @@ const FormCreateUpdate = ({ isStock, setIsStock, form }) => {
           options={optionsCategories}
           filterOption={filterOption}
         ></Select>
-      </Form.Item>
-      <Form.Item name="product_type" rules={rules_items.product_type}>
-        <Select
-          placeholder="Tipo de Producto"
-          suffixIcon={<TagsOutlined />}
-          showSearch
-          value={state.select_to_edit ? state.select_to_edit.product_type : "SALE"}
-          options={productTypeOptions}
-          filterOption={filterOption}
-        />
       </Form.Item>
       <Form.Item name="price" rules={rules_items.price}>
         <Input placeholder="Precio" prefix={<DollarOutlined />} />

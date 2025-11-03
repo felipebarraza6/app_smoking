@@ -6,7 +6,7 @@ import {
   ArrowLeftOutlined,
   ClearOutlined,
   RetweetOutlined,
-  ShopOutlined,
+  TruckOutlined,
 } from "@ant-design/icons";
 import { TypePaymentsContext } from "../../../containers/TypePayments";
 import { FaMoneyCheck, FaMoneyBills } from "react-icons/fa6";
@@ -17,9 +17,6 @@ import { controller } from "../../../controllers/type_payments";
 
 const FieldsForm = ({ form }) => {
   const { dispatch, state } = useContext(TypePaymentsContext);
-
-  // Debug: Ver qué datos tenemos
-  console.log("🔍 TypePayments state.branchs:", state.branchs);
 
   const rules_items = rules(state);
 
@@ -41,32 +38,6 @@ const FieldsForm = ({ form }) => {
 
   return (
     <>
-      <Form.Item name="branch" rules={rules_items.branch}>
-        <Select 
-          placeholder={
-            !Array.isArray(state.branchs?.list) 
-              ? "Cargando sucursales..." 
-              : state.branchs.list.length === 0 
-              ? "Sin sucursales disponibles"
-              : "Selecciona una sucursal"
-          }
-          style={{ width: "100%" }}
-          loading={!Array.isArray(state.branchs?.list)}
-          notFoundContent="Sin sucursales disponibles"
-          disabled={!Array.isArray(state.branchs?.list) || state.branchs.list.length === 0}
-        >
-          {Array.isArray(state.branchs?.list) && state.branchs.list.length > 0 
-            ? state.branchs.list.map((branch) => (
-                <Select.Option key={branch.id} value={branch.id}>
-                  <ShopOutlined style={{ marginRight: 8 }} />
-                  {branch.business_name || branch.name || `Sucursal ${branch.id}`}
-                </Select.Option>
-              ))
-            : []
-          }
-        </Select>
-      </Form.Item>
-
       <Form.Item name="name" rules={rules_items.name}>
         <Select placeholder="Seleccione una opción" style={{ width: "100%" }}>
           <Select.Option value="efectivo">
@@ -101,7 +72,6 @@ const FieldsForm = ({ form }) => {
             icon={iconBtnLeft}
             size="small"
             block
-            disabled={!Array.isArray(state.branchs?.list) || state.branchs.list.length === 0}
           >
             {state.select_to_edit ? "Actualizar" : "Agregar"}
           </Button>

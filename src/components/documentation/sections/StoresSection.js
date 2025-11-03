@@ -9,7 +9,7 @@ function StoresSection({ token }) {
     <>
       <Title level={3}>
         <ShopOutlined style={{ marginRight: 8 }} />
-        Sucursales
+        Tiendas y Sucursales
       </Title>
       <Paragraph>
         Administra todas las sucursales o puntos de venta de tu negocio. Cada
@@ -40,9 +40,7 @@ function StoresSection({ token }) {
           }}
         >
           <div style={{ fontSize: 32, marginBottom: 8 }}>🏬</div>
-          <div style={{ fontWeight: 700, fontSize: 18 }}>
-            Registrar Sucursal
-          </div>
+          <div style={{ fontWeight: 700, fontSize: 18 }}>Registrar Tienda</div>
           <Paragraph style={{ fontSize: 15, margin: "8px 0 0 0" }}>
             Agrega nuevas sucursales con dirección y datos de contacto.
           </Paragraph>
@@ -62,7 +60,7 @@ function StoresSection({ token }) {
         >
           <div style={{ fontSize: 32, marginBottom: 8 }}>👥</div>
           <div style={{ fontWeight: 700, fontSize: 18 }}>
-            Usuarios por Sucursal
+            Usuarios por Tienda
           </div>
           <Paragraph style={{ fontSize: 15, margin: "8px 0 0 0" }}>
             Asigna usuarios responsables a cada sucursal.

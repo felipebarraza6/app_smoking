@@ -24,38 +24,49 @@ export const useDrivers = () => {
     name: null,
     branch: null, // Se establecerá automáticamente cuando se carguen las sucursales
     vehicle_plate: null,
-    is_available: null, // Nuevo filtro para disponibilidad
   });
 
   // Estado para edición
   const [selectedDriver, setSelectedDriver] = useState(null);
 
-  // Cargar drivers y sucursales del usuario
+  // Cargar drivers y sucursales del usuario en una sola llamada
   const loadDrivers = useCallback(
     async (page = 1, currentFilters = filters) => {
       setLoading(true);
       setError(null);
 
       try {
-        console.log("🚚 Loading drivers with filters:", currentFilters);
         const response = await list(page, currentFilters);
-        console.log("🚚 API Response:", response);
 
-        // La API devuelve user_branches en la respuesta
+        // La API ahora devuelve user_branches en la respuesta
         if (response?.user_branches) {
           setUserBranches(response.user_branches);
-          console.log("🚚 User branches set:", response.user_branches);
+
+          // Si no hay filtro de sucursal y hay sucursales disponibles, establecer la primera por defecto
+          if (!currentFilters.branch && response.user_branches.length > 0) {
+            const defaultBranch = response.user_branches[0].id;
+            const updatedFilters = { ...currentFilters, branch: defaultBranch };
+            setFilters(updatedFilters);
+
+            // Recargar con el filtro por defecto
+            const responseWithFilter = await list(page, updatedFilters);
+            setDrivers({
+              results:
+                responseWithFilter?.results || responseWithFilter?.data || [],
+              count: responseWithFilter?.count || 0,
+              page: page,
+            });
+            return;
+          }
         }
 
-        const driversData = {
+        setDrivers({
           results: response?.results || response?.data || [],
           count: response?.count || 0,
           page: page,
-        };
-        console.log("🚚 Setting drivers data:", driversData);
-        setDrivers(driversData);
+        });
       } catch (err) {
-        console.error("Error loading drivers:", err);
+
         setError("Error al cargar los repartidores");
         setDrivers({
           results: [],
@@ -81,6 +92,7 @@ export const useDrivers = () => {
         form?.resetFields();
         return { success: true, message: "Repartidor creado correctamente" };
       } catch (err) {
+
         const errors = err.response?.data || {};
         const errorList = Object.keys(errors).map((key) => errors[key]);
         const errorMessage = errorList.join(", ") || "Error desconocido";
@@ -118,6 +130,7 @@ export const useDrivers = () => {
           message: "Repartidor actualizado correctamente",
         };
       } catch (err) {
+
         const errors = err.response?.data || {};
         const errorList = Object.keys(errors).map((key) => errors[key]);
         const errorMessage =
@@ -151,6 +164,7 @@ export const useDrivers = () => {
         await loadDrivers(1, filters); // Volver a página 1
         return { success: true, message: "Repartidor eliminado correctamente" };
       } catch (err) {
+
         const errorMessage =
           err.response?.data?.detail || err.message || "Error desconocido";
         setError(errorMessage);
@@ -186,15 +200,15 @@ export const useDrivers = () => {
 
   // Resetear filtros
   const resetFilters = useCallback(() => {
+    // Al resetear, mantener el filtro de sucursal por defecto
     const defaultFilters = {
       name: null,
-      branch: null,
+      branch: userBranches.length > 0 ? userBranches[0].id : null,
       vehicle_plate: null,
-      is_available: null,
     };
     setFilters(defaultFilters);
     loadDrivers(1, defaultFilters);
-  }, [loadDrivers]);
+  }, [userBranches, loadDrivers]);
 
   // Seleccionar driver para editar
   const selectDriverForEdit = useCallback((driver) => {
@@ -213,14 +227,10 @@ export const useDrivers = () => {
 
   // Cargar datos iniciales
   useEffect(() => {
-    console.log("🚚 useEffect triggered - appState.isAuth:", appState.isAuth);
     if (appState.isAuth) {
-      console.log("🚚 User is authenticated, loading drivers...");
       loadDrivers(1, filters);
-    } else {
-      console.log("🚚 User is not authenticated, skipping load");
     }
-  }, [appState.isAuth, loadDrivers, filters]);
+  }, [appState.isAuth]);
 
   // Opciones de sucursales para filtros
   const branchOptions = userBranches.map((branch) => ({

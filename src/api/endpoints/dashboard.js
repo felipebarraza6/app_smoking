@@ -1,7 +1,7 @@
 import { GET } from "../config";
 
 const getDashboardData = (params) => {
-  return GET("analytics/dashboard/summary/", { params });
+  return GET("core/dashboard/summary/", { params });
 };
 
 const dashboardEndpoints = {

@@ -4,7 +4,6 @@ import { useDrivers } from "../hooks/useDrivers";
 import { useNotifications } from "../hooks/useNotifications";
 import List from "../components/drivers/List/ComponentWithHooks";
 import CreateUpdate from "../components/drivers/CreateUpdate/ComponentWithHooks";
-import DriverSystemInfo from "../components/drivers/DriverSystemInfo";
 import AnimatedContainer from "./AnimatedContainer";
 import { defaultGutterRow } from "../utils/layout";
 
@@ -95,7 +94,6 @@ const Drivers = () => {
 
   return (
     <AnimatedContainer>
-      <DriverSystemInfo />
       <Row justify="space-around" gutter={gutterRow}>
         <Col xl={17} xs={24}>
           <List

@@ -4,7 +4,6 @@ import { UserOutlined, CrownOutlined } from "@ant-design/icons";
 import UserRoleSelect from "./UserRoleSelect";
 import UserRemoveButton from "./UserRemoveButton";
 import UserToggleStatusButton from "./UserToggleStatusButton";
-import ChangeUserBranchButton from "./ChangeUserBranchButton";
 import { ROLE_COLORS, ROLE_LABELS } from "./roles";
 
 const { Text } = Typography;
@@ -14,11 +13,9 @@ const UserTableMobile = ({
   currentUserId,
   currentUserType,
   currentUserRole,
-  currentBranch,
   onUpdateRole,
   onRemoveUser,
   onToggleStatus,
-  onChangeBranch,
 }) => {
   const isSystemAdmin = currentUserType === "ADM";
 
@@ -70,22 +67,6 @@ const UserTableMobile = ({
           canRemove = record.role === "EMPLOYEE" && !isCurrentUser;
         }
 
-        // Lógica para determinar si se puede cambiar la sucursal del usuario
-        let canChangeBranch = false;
-        if (isSystemAdmin) {
-          // Administradores del sistema pueden cambiar sucursal de cualquier usuario
-          canChangeBranch = true;
-        } else if (isCurrentUserOwner) {
-          // Los propietarios pueden cambiar sucursal de cualquier usuario (excepto a sí mismos)
-          canChangeBranch = !isCurrentUser;
-        } else if (currentUserRole === "ADMIN") {
-          // Los administradores pueden cambiar sucursal de empleados y gerentes
-          canChangeBranch = !isOwner && !isCurrentUser;
-        } else if (currentUserRole === "MANAGER") {
-          // Los gerentes pueden cambiar sucursal solo de empleados
-          canChangeBranch = record.role === "EMPLOYEE" && !isCurrentUser;
-        }
-
         return (
           <List.Item
             actions={[
@@ -109,13 +90,6 @@ const UserTableMobile = ({
                 key="remove"
                 onRemove={() => onRemoveUser(record.user.id)}
                 disabled={!canRemove}
-              />,
-              <ChangeUserBranchButton
-                key="change-branch"
-                user={record}
-                currentBranch={currentBranch}
-                onSuccess={onChangeBranch}
-                disabled={!canChangeBranch}
               />,
             ]}
           >

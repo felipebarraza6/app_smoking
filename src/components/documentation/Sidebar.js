@@ -86,7 +86,7 @@ const sections = [
     label: (
       <>
         <HomeOutlined style={{ marginRight: 8 }} />
-        Sucursales
+        Tiendas
       </>
     ),
   },

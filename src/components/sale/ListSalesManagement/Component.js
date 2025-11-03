@@ -5,7 +5,7 @@ import api from "../../../api/endpoints";
 import { columns as getColumns } from "./columns_orders";
 import FilterOrder from "./components/FilterOrder";
 import RenderColumn from "./renderColumn";
-import ReceiptModal from "../Create/add_payments/ReceiptModal";
+import ReceiptModal from "../../sale/Create/add_payments/ReceiptModal";
 
 const initialFilter = {
   branch: null,

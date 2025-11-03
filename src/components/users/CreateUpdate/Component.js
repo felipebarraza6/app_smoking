@@ -6,7 +6,6 @@ import { css } from "@emotion/react";
 import { UsersContext } from "../../../containers/Users";
 import { UserOutlined, UserAddOutlined } from "@ant-design/icons";
 import FieldsForm from "./FieldsForm";
-import DriverProfileManager from "../DriverProfileManager";
 
 const CreateUpdate = () => {
   const { state, dispatch } = useContext(UsersContext);
@@ -27,7 +26,7 @@ const CreateUpdate = () => {
         const cleanEmail = values.email
           .split("@")[0]
           .replace(/[^a-zA-Z0-9]/g, "");
-        values = { ...values, username: cleanEmail, type_user: "CL" };
+        values = { ...values, username: cleanEmail };
         controller.create(values, dispatch, form, notification);
       } else {
         Modal.error({
@@ -61,24 +60,11 @@ const CreateUpdate = () => {
   }, [state.select_to_edit, form]);
 
   return (
-    <>
-      <Card hoverable title={titleCard}>
-        <Form form={form} onFinish={createOrUpdateUser}>
-          <FieldsForm form={form} />
-        </Form>
-      </Card>
-
-      {/* Gestión de perfil de conductor para usuarios con rol DRIVER */}
-      {state.select_to_edit && (
-        <DriverProfileManager
-          user={state.select_to_edit}
-          onUpdate={() => {
-            // Recargar la lista de usuarios cuando se actualice el perfil
-            dispatch({ type: "update_list" });
-          }}
-        />
-      )}
-    </>
+    <Card hoverable title={titleCard}>
+      <Form form={form} onFinish={createOrUpdateUser}>
+        <FieldsForm form={form} />
+      </Form>
+    </Card>
   );
 };
 

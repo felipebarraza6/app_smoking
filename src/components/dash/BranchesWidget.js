@@ -62,7 +62,7 @@ const BranchesWidget = () => {
         title={
           <Space>
             <BranchesOutlined />
-            Roles en Sucursales
+            Roles en Tiendas
           </Space>
         }
         style={{ marginBottom: 16 }}
@@ -84,7 +84,7 @@ const BranchesWidget = () => {
       title={
         <Space>
           <BranchesOutlined />
-          Roles en Sucursales ({branches.length})
+          Roles en Tiendas ({branches.length})
         </Space>
       }
       style={{ marginBottom: 16 }}

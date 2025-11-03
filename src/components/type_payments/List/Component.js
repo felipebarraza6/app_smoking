@@ -16,12 +16,6 @@ const List = () => {
   };
 
   useEffect(() => {
-    console.log("🔄 List useEffect triggered:", {
-      countUpdate: state.countUpdate,
-      page: state.list?.page,
-      filters: state.filters,
-    });
-
     controller.list(state, dispatch);
     window.addEventListener("resize", () => {
       setWidthScreen(window.innerWidth);

@@ -18,7 +18,7 @@ import { css } from "@emotion/react";
 const SaleCreateDesktop = () => {
   const { state, dispatch } = useContext(SaleContext);
   const { message } = App.useApp();
-  const branchs = Array.isArray(state.branchs.list) ? state.branchs.list : [];
+  const branchs = state.branchs.list;
   const selected_branch = state.branchs.selected;
   const [currentTime, setCurrentTime] = useState(new Date().toLocaleString());
 
@@ -42,12 +42,10 @@ const SaleCreateDesktop = () => {
 
   const onChangeTab = (key) => {
     const get_branch = branchs.find((branch) => branch.id === key);
-    if (get_branch) {
-      dispatch({
-        type: "selected_branch",
-        payload: get_branch,
-      });
-    }
+    dispatch({
+      type: "selected_branch",
+      payload: get_branch,
+    });
   };
 
   const tabProps = {
@@ -106,18 +104,14 @@ const SaleCreateDesktop = () => {
           </Popconfirm>
         </Flex>
       }
-      tabList={
-        Array.isArray(branchs)
-          ? branchs.map((branch) => ({
-              key: branch.id,
-              label:
-                branch.business_name.length > 15
-                  ? `${branch.business_name.slice(0, 15).toUpperCase()}...`
-                  : branch.business_name.toUpperCase(),
-              icon: <ShopOutlined />,
-            }))
-          : []
-      }
+      tabList={branchs.map((branch) => ({
+        key: branch.id,
+        label:
+          branch.business_name.length > 15
+            ? `${branch.business_name.slice(0, 15).toUpperCase()}...`
+            : branch.business_name.toUpperCase(),
+        icon: <ShopOutlined />,
+      }))}
     >
       <Flex gap="large" style={{ minHeight: "60vh" }}>
         <StepsNav />

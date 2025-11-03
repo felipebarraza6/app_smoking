@@ -1,11 +1,10 @@
-import React, { createContext, useReducer, useMemo, useEffect } from "react";
+import React, { createContext, useReducer, useMemo } from "react";
 import { Col, Row } from "antd";
 import List from "../components/type_payments/List/Component";
 import CreateUpdate from "../components/type_payments/CreateUpdate/Component";
 import AnimatedContainer from "./AnimatedContainer";
 import { typePaymentsReducer } from "../reducers/typePaymentsReducer";
 import { defaultGutterRow } from "../utils/layout";
-import { my_branches_for_filters } from "../api/endpoints/branchs";
 
 export const TypePaymentsContext = createContext();
 
@@ -38,51 +37,6 @@ const TypePayments = () => {
   const gutterRow = useMemo(() => defaultGutterRow, []);
 
   const [state, dispatch] = useReducer(typePaymentsReducer, initialState);
-
-  useEffect(() => {
-    const loadBranches = async () => {
-      try {
-        console.log("🔄 Loading branches...");
-        const response = await my_branches_for_filters();
-        console.log("✅ Branches response:", response);
-
-        // Handle different response structures
-        let branchList = [];
-        if (Array.isArray(response)) {
-          branchList = response;
-        } else if (response?.results && Array.isArray(response.results)) {
-          branchList = response.results;
-        } else if (response?.data && Array.isArray(response.data)) {
-          branchList = response.data;
-        }
-
-        // Filter out the "all" option since it's not a real branch
-        branchList = branchList.filter(
-          (branch) => branch.id !== "all" && branch.is_all_option !== true
-        );
-
-        console.log("📋 Final branch list:", branchList);
-        dispatch({
-          type: "set_branchs",
-          payload: {
-            list: branchList,
-            count: branchList.length,
-          },
-        });
-      } catch (error) {
-        console.error("Error loading branches:", error);
-        dispatch({
-          type: "set_branchs",
-          payload: {
-            list: [],
-            count: 0,
-          },
-        });
-      }
-    };
-
-    loadBranches();
-  }, []);
 
   return (
     <AnimatedContainer>
