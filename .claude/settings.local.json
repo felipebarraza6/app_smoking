@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//Users/felipebarraza/projects_p/smoking_system/smoking_infrastructure/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -17,6 +17,8 @@ import {
   FcBullish,
   FcCalculator,
   FcInfo,
+  FcReading,
+  FcServices,
 } from "react-icons/fc";
 
 const MenuRouters = ({ onOptionClick }) => {
@@ -52,6 +54,33 @@ const MenuRouters = ({ onOptionClick }) => {
             icon: <FcCalculator />,
           },
           { key: "/app/orders-create", label: "Pedidos", icon: <FcRules /> },
+        ],
+      },
+      {
+        label: "Recetas y Nutrición",
+        icon: <FcServices />,
+        key: "sub3",
+        children: [
+          {
+            key: "/app/recipes",
+            icon: <FcReading />,
+            label: "Gestión de Recetas",
+          },
+          {
+            key: "/app/nutrition-calculator",
+            icon: <FcCalculator />,
+            label: "Calculadora Nutricional",
+          },
+          {
+            key: "/app/nutrition-dashboard",
+            icon: <FcDoughnutChart />,
+            label: "Dashboard Nutricional",
+          },
+          {
+            key: "/app/nutritional-ingredients",
+            icon: <FcPackage />,
+            label: "Ingredientes Nutricionales",
+          },
         ],
       },
       {
@@ -94,6 +123,13 @@ const MenuRouters = ({ onOptionClick }) => {
     // Atención al cliente solo abierto en rutas específicas
     if (pathname === "/app/sale" || pathname === "/app/orders-create") {
       openKeys.push("sub2");
+    }
+
+    // Recetas y Nutrición solo abierto en rutas específicas
+    if (pathname.startsWith("/app/recipes") || 
+        pathname.startsWith("/app/nutrition") || 
+        pathname === "/app/nutritional-ingredients") {
+      openKeys.push("sub3");
     }
 
     return openKeys;

@@ -26,6 +26,10 @@ import TypePayments from "../containers/TypePayments";
 import Sale from "../containers/Sale";
 import Orders from "../containers/Orders";
 import Measurements from "../containers/Measurements";
+import Recipes from "../containers/Recipes";
+import NutritionCalculatorPage from "../containers/NutritionCalculator";
+import NutritionDashboard from "../containers/NutritionDashboard";
+import NutritionalIngredientsPage from "../containers/NutritionalIngredients";
 import ListOrdersManagement from "../components/orders/ListOrdersManagement/Component";
 import ListSalesManagement from "../components/sale/ListSalesManagement/Component";
 import Dashboard from "../components/dash/DashboardRefactored";
@@ -213,6 +217,38 @@ const Home = () => {
                 element={
                   <PageFade>
                     <Measurements />
+                  </PageFade>
+                }
+              />
+              <Route
+                path="/app/recipes"
+                element={
+                  <PageFade>
+                    <Recipes />
+                  </PageFade>
+                }
+              />
+              <Route
+                path="/app/nutrition-calculator"
+                element={
+                  <PageFade>
+                    <NutritionCalculatorPage />
+                  </PageFade>
+                }
+              />
+              <Route
+                path="/app/nutrition-dashboard"
+                element={
+                  <PageFade>
+                    <NutritionDashboard />
+                  </PageFade>
+                }
+              />
+              <Route
+                path="/app/nutritional-ingredients"
+                element={
+                  <PageFade>
+                    <NutritionalIngredientsPage />
                   </PageFade>
                 }
               />

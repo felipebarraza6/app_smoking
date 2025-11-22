@@ -18,31 +18,52 @@ Axios.interceptors.response.use(
     // Manejar diferentes tipos de errores
     if (error.response) {
       // El servidor respondió con un código de estado fuera del rango 2xx
+      console.error(`🚨 HTTP Error ${error.response.status}: ${error.config.url}`);
+      console.error('Response data:', error.response.data);
 
-      // Si es error 401 (no autorizado), limpiar token y redirigir a login
+      // Si es error 401 (no autorizado), log detallado antes de redirigir
       if (error.response.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        window.location.href = "/login";
+        console.error('❌ 401 Unauthorized - Token:', localStorage.getItem("token"));
+        console.error('❌ URL que causó 401:', error.config.url);
+        console.error('❌ Headers enviados:', error.config.headers);
+        
+        // Comentar temporalmente la redirección automática
+        // localStorage.removeItem("token");
+        // localStorage.removeItem("user");
+        // window.location.href = "/login";
+        
+        alert(`Error 401 en: ${error.config.url}\nRevisar consola para detalles`);
       }
 
       // Si es error 500, mostrar mensaje más amigable
       if (error.response.status === 500) {
+        console.error('🔥 Server Error 500:', error.response.data);
       }
     } else if (error.request) {
       // La petición fue hecha pero no se recibió respuesta
+      console.error('🌐 No response received:', error.request);
     } else {
       // Algo pasó al configurar la petición
+      console.error('⚙️ Request setup error:', error.message);
     }
 
     return Promise.reject(error);
   }
 );
 
-// Interceptor para peticiones (logging)
+// Interceptor para peticiones (logging y auth)
 Axios.interceptors.request.use(
   (config) => {
     console.log(`🌐 ${config.method?.toUpperCase()} ${config.url}`);
+    
+    // Agregar token automáticamente si existe
+    const token = localStorage.getItem("token");
+    if (token && !config.headers.Authorization) {
+      config.headers.Authorization = `Token ${token}`;
+      console.log('🔑 Token agregado automáticamente');
+    }
+    
+    console.log('📤 Headers enviados:', config.headers);
     return config;
   },
   (error) => {
@@ -180,7 +201,7 @@ export const DELETE = async (endpoint) => {
 export const forgot_password = async (data) => {
   try {
     // No envía token, solo el email
-    const response = await POST_LOGIN("auth/users/forgot_password/", data);
+    const response = await POST_LOGIN("accounts/users/forgot_password/", data);
     return response;
   } catch (error) {
     throw error;

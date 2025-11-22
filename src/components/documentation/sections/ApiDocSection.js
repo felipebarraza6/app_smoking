@@ -36,7 +36,7 @@ function ApiDocSection({ token }) {
         isDark={false}
         method="POST"
         status={200}
-      >{`/api/auth/users/login/
+      >{`/api/accounts/users/login/
 {
   "email": "usuario@dominio.com",
   "password": "tu_clave"
